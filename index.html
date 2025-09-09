@@ -2,11 +2,188 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anoig App</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Anoig App – Painel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🚀 Anoig App está no ar!</h1>
-  <p>Primeira versão publicada com sucesso.</p>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div class="titles">
+        <strong>Anoig App</strong>
+        <span>Painel do Assinante</span>
+      </div>
+    </div>
+    <nav class="tabs">
+      <a href="#criar" class="tab">Criar</a>
+      <a href="#modelos" class="tab">Modelos Prontos</a>
+      <a href="#dados" class="tab">Meus Dados</a>
+      <a href="#pagamentos" class="tab">Meus Pagamentos</a>
+    </nav>
+  </header>
+
+  <main id="view">
+    <!-- Tela: Criar -->
+    <section id="view-criar" class="screen hidden">
+      <div class="editor">
+        <aside class="panel">
+          <div class="panel-group">
+            <h3>Botões da página</h3>
+            <div class="btn-row">
+              <button id="addBtn" class="btn primary">+ Adicionar botão</button>
+              <button id="reorderHint" class="btn ghost">Reorganizar (arraste)</button>
+            </div>
+            <ul id="buttonsList" class="list sortable">
+              <!-- itens gerados via JS -->
+            </ul>
+          </div>
+
+          <div class="panel-group">
+            <h3>Editar botão selecionado</h3>
+            <label>Texto
+              <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
+            </label>
+            <label>Link
+              <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
+            </label>
+            <label>Cor do botão
+              <input id="btnColor" type="color" value="#2b7a78">
+            </label>
+            <div class="btn-row">
+              <button id="applyBtn" class="btn">Aplicar</button>
+              <button id="deleteBtn" class="btn danger">Excluir</button>
+            </div>
+          </div>
+
+          <div class="panel-group">
+            <h3>Cabeçalho da página</h3>
+            <label>Título
+              <input id="pageTitle" type="text" placeholder="Nome do cliente">
+            </label>
+            <label>Subtítulo (opcional)
+              <input id="pageSubtitle" type="text" placeholder="Profissão / slogan">
+            </label>
+            <label>Fundo do cabeçalho
+              <select id="headerPreset">
+                <option value="pattern1">Padrão 1</option>
+                <option value="pattern2">Padrão 2</option>
+                <option value="solid">Cor sólida</option>
+              </select>
+            </label>
+            <label>Cor sólida (se escolhido)
+              <input id="headerColor" type="color" value="#1f2937">
+            </label>
+          </div>
+
+          <div class="panel-group">
+            <div class="btn-row sticky">
+              <button id="saveDraft" class="btn">Salvar</button>
+              <button id="publish" class="btn primary">Publicar</button>
+            </div>
+            <small id="publishHint" class="muted"></small>
+          </div>
+        </aside>
+
+        <section class="preview">
+          <div class="phone">
+            <div id="phoneHeader" class="phone-header">
+              <div class="avatar">+</div>
+              <div class="texts">
+                <div id="pvTitle" class="pv-title">Título da Página</div>
+                <div id="pvSubtitle" class="pv-subtitle">Subtítulo opcional</div>
+              </div>
+            </div>
+            <div id="pvButtons" class="phone-body">
+              <!-- prévia dos botões via JS -->
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- Tela: Modelos -->
+    <section id="view-modelos" class="screen hidden">
+      <h2>Modelos Prontos</h2>
+      <p class="muted">Escolha um modelo para começar mais rápido. Depois você pode editar as cores, textos e links.</p>
+      <div class="models-grid">
+        <div class="model-card">
+          <div class="thumb"></div>
+          <strong>Essencial</strong>
+          <button class="btn small">Aplicar</button>
+        </div>
+        <div class="model-card">
+          <div class="thumb"></div>
+          <strong>Promo</strong>
+          <button class="btn small">Aplicar</button>
+        </div>
+        <div class="model-card">
+          <div class="thumb"></div>
+          <strong>Serviços</strong>
+          <button class="btn small">Aplicar</button>
+        </div>
+        <div class="model-card">
+          <div class="thumb"></div>
+          <strong>Restaurante</strong>
+          <button class="btn small">Aplicar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tela: Meus Dados -->
+    <section id="view-dados" class="screen hidden">
+      <h2>Meus Dados</h2>
+      <form class="form">
+        <label>Nome completo
+          <input type="text" placeholder="Seu nome">
+        </label>
+        <label>E-mail
+          <input type="email" placeholder="seuemail@exemplo.com">
+        </label>
+        <label>Foto / Logo
+          <input type="file" accept="image/*">
+        </label>
+        <label>Status da assinatura
+          <input id="statusInput" type="text" value="ativa" disabled>
+        </label>
+        <div class="btn-row">
+          <button class="btn">Atualizar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Tela: Meus Pagamentos -->
+    <section id="view-pagamentos" class="screen hidden">
+      <h2>Meus Pagamentos</h2>
+      <div class="plans">
+        <div class="plan">
+          <h3>Recorrente</h3>
+          <div class="price">R$200<span>/mês</span></div>
+          <ul>
+            <li>Pagamento automático</li>
+            <li>Mais barato</li>
+            <li>Sem preocupação de renovar</li>
+          </ul>
+          <button class="btn primary">Assinar recorrente</button>
+        </div>
+        <div class="plan">
+          <h3>Mensal (flex)</h3>
+          <div class="price">R$300<span>/mês</span></div>
+          <ul>
+            <li>Parcele em 6x de R$50</li>
+            <li>Teste por 30 dias</li>
+            <li>Depois migre p/ recorrente</li>
+          </ul>
+          <button class="btn">Assinar mensal</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <small>© Anoig • v0.1 (protótipo estático)</small>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
