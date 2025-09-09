@@ -34,9 +34,7 @@
               <button id="addBtn" class="btn primary">+ Adicionar botão</button>
               <button id="reorderHint" class="btn ghost">Reorganizar (arraste)</button>
             </div>
-            <ul id="buttonsList" class="list sortable">
-              <!-- itens gerados via JS -->
-            </ul>
+            <ul id="buttonsList" class="list sortable"></ul>
           </div>
 
           <div class="panel-group">
@@ -94,9 +92,7 @@
                 <div id="pvSubtitle" class="pv-subtitle">Subtítulo opcional</div>
               </div>
             </div>
-            <div id="pvButtons" class="phone-body">
-              <!-- prévia dos botões via JS -->
-            </div>
+            <div id="pvButtons" class="phone-body"></div>
           </div>
         </section>
       </div>
@@ -105,24 +101,24 @@
     <!-- Tela: Modelos -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
-      <p class="muted">Escolha um modelo para começar mais rápido. Depois você pode editar as cores, textos e links.</p>
+      <p class="muted">Escolha um modelo para começar. Depois você pode editar, excluir, incluir e reordenar botões na aba <strong>Criar</strong>.</p>
       <div class="models-grid">
-        <div class="model-card">
+        <div class="model-card" data-model="essencial">
           <div class="thumb"></div>
           <strong>Essencial</strong>
           <button class="btn small">Aplicar</button>
         </div>
-        <div class="model-card">
+        <div class="model-card" data-model="promo">
           <div class="thumb"></div>
           <strong>Promo</strong>
           <button class="btn small">Aplicar</button>
         </div>
-        <div class="model-card">
+        <div class="model-card" data-model="servicos">
           <div class="thumb"></div>
           <strong>Serviços</strong>
           <button class="btn small">Aplicar</button>
         </div>
-        <div class="model-card">
+        <div class="model-card" data-model="restaurante">
           <div class="thumb"></div>
           <strong>Restaurante</strong>
           <button class="btn small">Aplicar</button>

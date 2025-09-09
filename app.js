@@ -1,7 +1,7 @@
-// Simulação de status da assinatura (troque para 'inativa' para ver o botão publicar desabilitado)
+// Simulação de status da assinatura
 let assinaturaStatus = 'ativa';
 
-// Estado simples do editor
+// Estado do editor
 const state = {
   buttons: [],
   selectedIndex: -1,
@@ -13,56 +13,88 @@ const state = {
   }
 };
 
-// Navegação por abas (hash)
+// Modelos prontos
+const presetModels = {
+  essencial: [
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366' },
+    { label: 'Instagram', link: 'https://instagram.com/seucliente', color: '#E1306C' },
+    { label: 'Site', link: 'https://exemplo.com', color: '#2b7a78' }
+  ],
+  promo: [
+    { label: 'Cupom -20%', link: 'https://exemplo.com/cupom', color: '#f59e0b' },
+    { label: 'Compre agora', link: 'https://loja.com/produto', color: '#ef4444' },
+    { label: 'WhatsApp Vendas', link: 'https://wa.me/5591...', color: '#25D366' }
+  ],
+  servicos: [
+    { label: 'Agendar consulta', link: 'https://agenda.com', color: '#3b82f6' },
+    { label: 'Orçamento', link: 'https://formulario.com', color: '#9333ea' },
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366' }
+  ],
+  restaurante: [
+    { label: 'Cardápio', link: 'https://menu.delivery', color: '#ef4444' },
+    { label: 'Peça no iFood', link: 'https://ifood.com', color: '#f97316' },
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366' }
+  ]
+};
+
+function applyModel(name){
+  const model = presetModels[name];
+  if(!model) return;
+  state.buttons = model.map(b => ({ ...b }));
+  state.selectedIndex = -1;
+  location.hash = '#criar';
+  refreshUI();
+}
+
 function setScreenFromHash(){
   const hash = location.hash.replace('#','') || 'criar';
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   const el = document.getElementById(`view-${hash}`);
   if(el) el.classList.remove('hidden');
-
-  // marcar aba ativa (só estilo simples)
   document.querySelectorAll('.tab').forEach(a=>{
     a.classList.toggle('active', a.getAttribute('href') === `#${hash}`);
   });
 }
+
 window.addEventListener('hashchange', setScreenFromHash);
 window.addEventListener('load', () => {
   bindEditor();
   setScreenFromHash();
   refreshUI();
+
+  // Bind dos botões de modelo
+  document.querySelectorAll('.model-card button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const card = e.currentTarget.closest('.model-card');
+      const modelName = card?.dataset?.model;
+      applyModel(modelName);
+    });
+  });
 });
 
-// ====== Editor ======
+// ===== Editor =====
 function bindEditor(){
   const addBtn = document.getElementById('addBtn');
   const applyBtn = document.getElementById('applyBtn');
   const deleteBtn = document.getElementById('deleteBtn');
-
   const btnText = document.getElementById('btnText');
   const btnLink = document.getElementById('btnLink');
   const btnColor = document.getElementById('btnColor');
-
   const pageTitle = document.getElementById('pageTitle');
   const pageSubtitle = document.getElementById('pageSubtitle');
   const headerPreset = document.getElementById('headerPreset');
   const headerColor = document.getElementById('headerColor');
-
   const saveDraft = document.getElementById('saveDraft');
   const publish = document.getElementById('publish');
   const publishHint = document.getElementById('publishHint');
 
-  // status da assinatura controla o botão Publicar
   publish.disabled = (assinaturaStatus !== 'ativa');
   publishHint.textContent = publish.disabled
     ? 'Sua assinatura está inativa. Regularize em Meus Pagamentos para publicar.'
     : '';
 
   addBtn.addEventListener('click', ()=>{
-    state.buttons.push({
-      label: 'Novo botão',
-      link: 'https://',
-      color: '#2b7a78'
-    });
+    state.buttons.push({ label: 'Novo botão', link: 'https://', color: '#2b7a78' });
     state.selectedIndex = state.buttons.length - 1;
     refreshUI();
   });
@@ -99,9 +131,7 @@ function bindEditor(){
     refreshHeader();
   });
 
-  saveDraft.addEventListener('click', ()=>{
-    alert('Rascunho salvo (simulação).');
-  });
+  saveDraft.addEventListener('click', ()=> alert('Rascunho salvo (simulação).'));
   publish.addEventListener('click', ()=>{
     if(assinaturaStatus !== 'ativa'){
       alert('Assinatura inativa. Vá em Meus Pagamentos.');
@@ -110,12 +140,10 @@ function bindEditor(){
     alert('Página publicada (simulação).');
   });
 
-  // drag and drop simples para reordenar
   enableDragSort(document.getElementById('buttonsList'));
 }
 
 function refreshUI(){
-  // lista de botões (editor)
   const list = document.getElementById('buttonsList');
   list.innerHTML = '';
   state.buttons.forEach((b, idx)=>{
@@ -138,14 +166,12 @@ function refreshUI(){
     list.appendChild(li);
   });
 
-  // preview
   const pv = document.getElementById('pvButtons');
   pv.innerHTML = '';
   state.buttons.forEach((b)=>{
     const div = document.createElement('div');
     div.className = 'card-btn';
     div.style.background = '#0f1a31';
-    div.style.borderColor = 'rgba(255,255,255,0.06)';
     div.innerHTML = `
       <div class="card-inner">
         <div class="card-icon" style="background:${b.color}"></div>
@@ -164,13 +190,7 @@ function loadToForm(){
   const btnText = document.getElementById('btnText');
   const btnLink = document.getElementById('btnLink');
   const btnColor = document.getElementById('btnColor');
-
-  if(i < 0){
-    btnText.value = '';
-    btnLink.value = '';
-    btnColor.value = '#2b7a78';
-    return;
-  }
+  if(i < 0){ btnText.value = ''; btnLink.value = ''; btnColor.value = '#2b7a78'; return; }
   const b = state.buttons[i];
   btnText.value = b.label;
   btnLink.value = b.link;
@@ -181,10 +201,8 @@ function refreshHeader(){
   const header = document.getElementById('phoneHeader');
   const t = document.getElementById('pvTitle');
   const s = document.getElementById('pvSubtitle');
-
   t.textContent = state.header.title || 'Título da Página';
   s.textContent = state.header.subtitle || 'Subtítulo opcional';
-
   if(state.header.preset === 'solid'){
     header.style.background = state.header.color;
   } else if(state.header.preset === 'pattern2'){
@@ -194,26 +212,18 @@ function refreshHeader(){
   }
 }
 
-// drag & drop para reordenar
 function enableDragSort(list){
   let dragEl = null;
-
-  list.addEventListener('dragstart', (e)=>{
-    dragEl = e.target.closest('li');
-    e.dataTransfer.effectAllowed = 'move';
-  });
-
+  list.addEventListener('dragstart', (e)=>{ dragEl = e.target.closest('li'); e.dataTransfer.effectAllowed = 'move'; });
   list.addEventListener('dragover', (e)=>{
     e.preventDefault();
     const li = e.target.closest('li');
     if(!li || li === dragEl) return;
     const rect = li.getBoundingClientRect();
-    const next = (e.clientY - rect.top) / (rect.height) > 0.5;
+    const next = (e.clientY - rect.top) / rect.height > 0.5;
     list.insertBefore(dragEl, next ? li.nextSibling : li);
   });
-
   list.addEventListener('drop', ()=>{
-    // atualizar ordem no estado
     const items = Array.from(list.querySelectorAll('li'));
     const newOrder = items.map(li => state.buttons[Number(li.dataset.index)]);
     state.buttons = newOrder;
