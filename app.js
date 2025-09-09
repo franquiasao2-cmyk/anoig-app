@@ -1,8 +1,7 @@
 /* ================== SUPABASE: INIT ================== */
 const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
-let supa = null;
-function ensureSupa(){ if(!supa) supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON); return supa; }
+let supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ============ ESTADO BÁSICO E TEMA ============ */
 const THEME_KEY = 'anoig-theme';
@@ -11,7 +10,7 @@ var state = {
   slug: '',
   buttons: [],
   selectedIndex: -1,
-  header: { title:'Título da Página', subtitle:'Subtítulo opcional', preset:'pattern1', color:'#e5e7eb' }
+  header: { title:'Título da Página', subtitle:'', preset:'pattern1', color:'#e5e7eb' }
 };
 
 /* ============ UTILIDADES ============ */
@@ -60,7 +59,7 @@ var presetModels = {
 };
 
 /* ============ AUTENTICAÇÃO ============ */
-async function getCurrentUser(){ ensureSupa(); const { data:{ user } } = await supa.auth.getUser(); return user||null; }
+async function getCurrentUser(){ const { data:{ user } } = await supa.auth.getUser(); return user||null; }
 function setAuthUI(user){
   const hello=qs('#authHello'), helloEmail=qs('#authEmail');
   const emailInp=qs('#authEmailInput'), passInp=qs('#authPassInput');
@@ -90,7 +89,7 @@ function setAuthUI(user){
 }
 async function loadMyProfileIntoUI(){
   const user=await getCurrentUser(); if(!user) return;
-  const { data, error } = await ensureSupa().from('profiles').select('*').eq('id',user.id).single();
+  const { data, error } = await supa.from('profiles').select('*').eq('id',user.id).single();
   if(error) return;
   const nameInp=qs('#meuNome'); if(nameInp) nameInp.value=data.name||'';
   const themeSel=qs('#themeSelect'); if(themeSel&&data.theme){ applyTheme(data.theme); }
@@ -99,7 +98,7 @@ async function handleSignUp(){
   const email=(qs('#authEmailInput').value||'').trim();
   const pass=(qs('#authPassInput').value||'').trim();
   if(!email||!pass){ alert('Preencha e-mail e senha.'); return; }
-  const { error } = await ensureSupa().auth.signUp({ email, password:pass });
+  const { error } = await supa.auth.signUp({ email, password:pass });
   if(error){ alert('Erro no cadastro: '+error.message); return; }
   alert('Cadastro feito! Verifique seu e-mail se necessário.');
   const u=await getCurrentUser(); setAuthUI(u); loadMyProfileIntoUI();
@@ -108,18 +107,18 @@ async function handleSignIn(){
   const email=(qs('#authEmailInput').value||'').trim();
   const pass=(qs('#authPassInput').value||'').trim();
   if(!email||!pass){ alert('Preencha e-mail e senha.'); return; }
-  const { error } = await ensureSupa().auth.signInWithPassword({ email, password:pass });
+  const { error } = await supa.auth.signInWithPassword({ email, password:pass });
   if(error){ alert('Erro ao entrar: '+error.message); return; }
   alert('Bem-vindo!');
   const u=await getCurrentUser(); setAuthUI(u); loadMyProfileIntoUI(); if(location.hash==='#projetos') initProjectsView(true);
 }
-async function handleSignOut(){ await ensureSupa().auth.signOut(); setAuthUI(null); }
+async function handleSignOut(){ await supa.auth.signOut(); setAuthUI(null); }
 
 /* ============ PERFIL (tema/nome) ============ */
 async function savePreferences(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para salvar.'); return; }
   const name=(qs('#meuNome').value||'').trim(); const theme=(qs('#themeSelect').value||'light'); applyTheme(theme);
-  const { error } = await ensureSupa().from('profiles').update({ name, theme }).eq('id',user.id);
+  const { error } = await supa.from('profiles').update({ name, theme }).eq('id',user.id);
   if(error){ alert('Erro ao salvar perfil: '+error.message); return; }
   alert('Preferências salvas.');
 }
@@ -130,22 +129,18 @@ function validateDraft(opts){ opts=opts||{}; var errs=[]; if(!state.slug||state.
 async function saveToDatabase(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para salvar.'); return; }
   if(!validateDraft()) return;
-  const s=ensureSupa();
-  // upsert page
   const base = { owner_id:user.id, slug:state.slug, title:state.header.title, subtitle:state.header.subtitle||null, header_preset:state.header.preset, header_color:state.header.color||'#e5e7eb', is_published:false, updated_at:new Date().toISOString() };
-  let { data: ex, error: selErr } = await s.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).limit(1);
+  let { data: ex, error: selErr } = await supa.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).limit(1);
   if(selErr){ alert('Erro lendo página: '+selErr.message); return; }
   let pageId=null;
-  if(ex && ex.length){ pageId=ex[0].id; const { error: upErr } = await s.from('pages').update(base).eq('id',pageId).eq('owner_id',user.id); if(upErr){ alert('Erro atualizando página: '+upErr.message); return; } }
-  else { const { data: ins, error: insErr } = await s.from('pages').insert(base).select('id').single(); if(insErr){ alert('Erro criando página: '+insErr.message); return; } pageId=ins.id; }
+  if(ex && ex.length){ pageId=ex[0].id; const { error: upErr } = await supa.from('pages').update(base).eq('id',pageId).eq('owner_id',user.id); if(upErr){ alert('Erro atualizando página: '+upErr.message); return; } }
+  else { const { data: ins, error: insErr } = await supa.from('pages').insert(base).select('id').single(); if(insErr){ alert('Erro criando página: '+insErr.message); return; } pageId=ins.id; }
 
-  // replace buttons
-  await s.from('buttons').delete().eq('page_id',pageId);
+  await supa.from('buttons').delete().eq('page_id',pageId);
   const payload = state.buttons.map((b,idx)=>({ page_id:pageId, label:b.label, url:b.link, color:b.color||'#2b7a78', text_color:b.textColor||'#111827', style:b.style||'solid', size:b.size||'md', radius:b.radius??14, shadow:!!b.shadow, order_index:idx }));
-  const { error: btnErr } = await s.from('buttons').insert(payload);
+  const { error: btnErr } = await supa.from('buttons').insert(payload);
   if(btnErr){ alert('Erro salvando botões: '+btnErr.message); return; }
   alert('Rascunho salvo no banco!');
-  // Atualiza lista de projetos (se estiver na aba)
   if(location.hash==='#projetos') initProjectsView(true);
 }
 async function publishPage(){
@@ -153,10 +148,9 @@ async function publishPage(){
   if(assinaturaStatus!=='ativa'){ alert('Assinatura inativa.'); return; }
   if(!validateDraft()) return;
   await saveToDatabase();
-  const s=ensureSupa();
-  const { data: pg, error: selErr } = await s.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).single();
+  const { data: pg, error: selErr } = await supa.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).single();
   if(selErr){ alert('Erro localizando página: '+selErr.message); return; }
-  const { error: pubErr } = await s.from('pages').update({ is_published:true, published_at:new Date().toISOString(), updated_at:new Date().toISOString() }).eq('id',pg.id).eq('owner_id',user.id);
+  const { error: pubErr } = await supa.from('pages').update({ is_published:true, published_at:new Date().toISOString(), updated_at:new Date().toISOString() }).eq('id',pg.id).eq('owner_id',user.id);
   if(pubErr){ alert('Erro ao publicar: '+pubErr.message); return; }
   alert('Página publicada!');
   if(location.hash==='#projetos') initProjectsView(true);
@@ -165,30 +159,22 @@ async function publishPage(){
 /* ============ CARREGAR PROJETO PARA EDITAR ============ */
 async function loadPageForEditing(pageId){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta.'); return; }
-  const s=ensureSupa();
-  const { data: page, error: pErr } = await s.from('pages').select('*').eq('id',pageId).eq('owner_id',user.id).single();
+  const { data: page, error: pErr } = await supa.from('pages').select('*').eq('id',pageId).eq('owner_id',user.id).single();
   if(pErr){ alert('Erro lendo página: '+pErr.message); return; }
-  const { data: buttons, error: bErr } = await s.from('buttons').select('*').eq('page_id',pageId).order('order_index',{ascending:true});
+  const { data: buttons, error: bErr } = await supa.from('buttons').select('*').eq('page_id',pageId).order('order_index',{ascending:true});
   if(bErr){ alert('Erro lendo botões: '+bErr.message); return; }
-
-  // Preenche state e UI
   state.slug=page.slug;
   state.header.title=page.title||'Título da Página';
   state.header.subtitle=page.subtitle||'';
   state.header.preset=page.header_preset||'pattern1';
   state.header.color=page.header_color||'#e5e7eb';
-  state.buttons=(buttons||[]).map(b=>({
-    label:b.label, link:b.url, color:b.color, textColor:b.text_color, style:b.style, size:b.size, radius:b.radius, shadow:b.shadow
-  }));
+  state.buttons=(buttons||[]).map(b=>({ label:b.label, link:b.url, color:b.color, textColor:b.text_color, style:b.style, size:b.size, radius:b.radius, shadow:b.shadow }));
   state.selectedIndex=-1;
-
-  // Preenche formulários
   if(qs('#pageSlug')) qs('#pageSlug').value=state.slug;
   if(qs('#pageTitle')) qs('#pageTitle').value=state.header.title;
   if(qs('#pageSubtitle')) qs('#pageSubtitle').value=state.header.subtitle;
   if(qs('#headerPreset')) qs('#headerPreset').value=state.header.preset;
   if(qs('#headerColor')) qs('#headerColor').value=state.header.color;
-
   location.hash='#criar';
   refreshUI();
 }
@@ -197,7 +183,7 @@ async function loadPageForEditing(pageId){
 let _projectsCache = [];
 async function fetchMyPages(){
   const user=await getCurrentUser(); if(!user) return [];
-  const { data, error } = await ensureSupa().from('pages')
+  const { data, error } = await supa.from('pages')
     .select('id, slug, title, is_published, created_at, updated_at, published_at')
     .eq('owner_id', user.id)
     .order('updated_at', { ascending:false });
@@ -229,7 +215,6 @@ function renderProjects(pages){
   const items = filterProjects(pages);
   if(!items.length){ if(empty) empty.style.display='block'; return; }
   if(empty) empty.style.display='none';
-
   items.forEach(p=>{
     const card=document.createElement('div');
     card.className='proj-card';
@@ -248,8 +233,6 @@ function renderProjects(pages){
     `;
     list.appendChild(card);
   });
-
-  // Ações
   list.querySelectorAll('button[data-act="edit"]').forEach(b=>{
     b.addEventListener('click', e=>{
       const id=e.currentTarget.getAttribute('data-id');
@@ -273,7 +256,7 @@ async function initProjectsView(forceRefresh){
   renderProjects(_projectsCache);
 }
 
-/* ============ UI DO EDITOR (igual base) ============ */
+/* ============ UI DO EDITOR ============ */
 function bindEditor(){
   var addBtn=qs('#addBtn'), applyBtn=qs('#applyBtn'), deleteBtn=qs('#deleteBtn');
   var btnText=qs('#btnText'), btnLink=qs('#btnLink'), btnColor=qs('#btnColor'), btnTextColor=qs('#btnTextColor'), btnStyle=qs('#btnStyle'), btnSize=qs('#btnSize'), btnRadius=qs('#btnRadius'), btnShadow=qs('#btnShadow');
@@ -376,20 +359,12 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   });
 
   // Auth
-  ensureSupa();
   const u=await getCurrentUser(); setAuthUI(u); if(u) loadMyProfileIntoUI();
 
+  // Listeners Auth/Prefs
   qs('#btnSignUp').addEventListener('click', handleSignUp);
   qs('#btnSignIn').addEventListener('click', handleSignIn);
   qs('#btnSignOut').addEventListener('click', handleSignOut);
-
   qs('#savePrefs').addEventListener('click', savePreferences);
-
-  // Barra de teste
-  const btnInit=qs('#btnInitSupa'), btnTest=qs('#btnTestSupa');
-  if(btnInit && btnTest){
-    btnInit.addEventListener('click', ()=>{ alert('O cliente já está inicializado neste build. Use "Testar conexão".'); btnTest.disabled=false; });
-    btnTest.addEventListener('click', async ()=>{ try{ const { data, error } = await ensureSupa().from('profiles').select('*').limit(1); if(error) alert('Erro: '+error.message); else alert('Conectado! Retorno da tabela profiles: '+data.length+' registro(s).'); }catch(e){ alert('Falha: '+e.message); } });
-  }
 });
 window.addEventListener('hashchange', setScreenFromHash);

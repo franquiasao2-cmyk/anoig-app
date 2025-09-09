@@ -35,24 +35,6 @@
     </nav>
   </header>
 
-  <!-- BARRA DE CONFIGURAÇÃO DO SUPABASE (TEMPORÁRIA PARA TESTE) -->
-  <div class="bar-test">
-    <strong>Conexão Supabase (teste rápido)</strong>
-    <div class="grid-2" style="margin-top:8px">
-      <label>URL do projeto (Project URL)
-        <input id="sbUrl" type="text" value="https://tyhoonmssqxbtktiuwtd.supabase.co" readonly>
-      </label>
-      <label>Anon key (chave pública)
-        <input id="sbAnon" type="text" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI" readonly>
-      </label>
-    </div>
-    <div class="btn-row" style="margin-top:8px">
-      <button class="btn" id="btnInitSupa">Iniciar Supabase</button>
-      <button class="btn primary" id="btnTestSupa" disabled>Testar conexão</button>
-    </div>
-    <small class="muted">⚠️ Depois que tudo estiver OK, removemos esta barra.</small>
-  </div>
-
   <main id="view">
     <!-- CRIAR -->
     <section id="view-criar" class="screen">
@@ -282,13 +264,13 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.7 (Projetos + filtros)</small>
+    <small>© Anoig • v0.8 (sem barra de teste)</small>
   </footer>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- App -->
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
