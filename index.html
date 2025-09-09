@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -47,11 +47,9 @@
 
           <div class="panel-group">
             <h3>Editar botão selecionado</h3>
-
             <label>Texto
               <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
             </label>
-
             <label>Link
               <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
             </label>
@@ -61,7 +59,7 @@
                 <input id="btnColor" type="color" value="#2b7a78">
               </label>
               <label>Cor do texto
-                <input id="btnTextColor" type="color" value="#ffffff">
+                <input id="btnTextColor" type="color" value="#111827">
               </label>
             </div>
 
@@ -116,7 +114,7 @@
               </select>
             </label>
             <label>Cor sólida (se escolhido)
-              <input id="headerColor" type="color" value="#1f2937">
+              <input id="headerColor" type="color" value="#e5e7eb">
             </label>
           </div>
 
@@ -188,8 +186,14 @@
         <label>Status da assinatura
           <input id="statusInput" type="text" value="ativa" disabled>
         </label>
+        <label>Tema do painel
+          <select id="themeSelect">
+            <option value="light" selected>Claro</option>
+            <option value="dark">Escuro</option>
+          </select>
+        </label>
         <div class="btn-row">
-          <button class="btn">Atualizar</button>
+          <button type="button" id="savePrefs" class="btn">Salvar preferências</button>
         </div>
       </form>
     </section>
@@ -222,16 +226,15 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.3.2</small>
+    <small>© Anoig • v0.4 (tema claro + seletor de tema)</small>
   </footer>
 
   <script>
     if(!location.hash){ location.hash = '#criar'; }
   </script>
-  <script src="app.js?v=2"></script>
-
+  <script src="app.js?v=4"></script>
   <noscript>
-    <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#ffb4b4;">
+    <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
       O JavaScript está desativado. Ative para usar o painel.
     </div>
   </noscript>

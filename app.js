@@ -1,5 +1,6 @@
 // ======= Configurações simuladas =======
 var assinaturaStatus = 'ativa'; // mude para 'inativa' para testar bloqueio
+var THEME_KEY = 'anoig-theme';
 
 // ======= Estado do editor =======
 var state = {
@@ -10,31 +11,31 @@ var state = {
     title: 'Título da Página',
     subtitle: 'Subtítulo opcional',
     preset: 'pattern1',
-    color: '#1f2937'
+    color: '#e5e7eb'
   }
 };
 
 // ======= Modelos prontos =======
 var presetModels = {
   essencial: [
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#ffffff', style:'solid', size:'md', radius:14, shadow:true },
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'solid', size:'md', radius:14, shadow:true },
     { label: 'Instagram', link: 'https://instagram.com/seucliente', color: '#E1306C', textColor:'#ffffff', style:'gradient', size:'md', radius:14, shadow:true },
-    { label: 'Site', link: 'https://exemplo.com', color: '#2b7a78', textColor:'#ffffff', style:'outline', size:'md', radius:14, shadow:false }
+    { label: 'Site', link: 'https://exemplo.com', color: '#2b7a78', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
   ],
   promo: [
-    { label: 'Cupom -20%', link: 'https://exemplo.com/cupom', color: '#f59e0b', textColor:'#0b1220', style:'solid', size:'lg', radius:16, shadow:true },
+    { label: 'Cupom -20%', link: 'https://exemplo.com/cupom', color: '#f59e0b', textColor:'#111827', style:'solid', size:'lg', radius:16, shadow:true },
     { label: 'Compre agora', link: 'https://loja.com/produto', color: '#ef4444', textColor:'#ffffff', style:'gradient', size:'md', radius:16, shadow:true },
-    { label: 'WhatsApp Vendas', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0b1220', style:'glass', size:'md', radius:14, shadow:false }
+    { label: 'WhatsApp Vendas', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
   ],
   servicos: [
     { label: 'Agendar consulta', link: 'https://agenda.com', color: '#3b82f6', textColor:'#ffffff', style:'solid', size:'md', radius:14, shadow:true },
     { label: 'Orçamento', link: 'https://formulario.com', color: '#9333ea', textColor:'#ffffff', style:'outline', size:'md', radius:14, shadow:false },
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0b1220', style:'glass', size:'md', radius:14, shadow:false }
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
   ],
   restaurante: [
     { label: 'Cardápio', link: 'https://menu.delivery', color: '#ef4444', textColor:'#ffffff', style:'fantasy', size:'lg', radius:18, shadow:true },
-    { label: 'Peça no iFood', link: 'https://ifood.com', color: '#f97316', textColor:'#0b1220', style:'solid', size:'md', radius:16, shadow:true },
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0b1220', style:'outline', size:'md', radius:14, shadow:false }
+    { label: 'Peça no iFood', link: 'https://ifood.com', color: '#f97316', textColor:'#111827', style:'solid', size:'md', radius:16, shadow:true },
+    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
   ]
 };
 
@@ -42,7 +43,6 @@ var presetModels = {
 function qs(sel){ return document.querySelector(sel); }
 function qsa(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
 
-// Escurece cor (0..1)
 function shade(hex, factor){
   if(!hex){ hex = '#2b7a78'; }
   if(typeof factor !== 'number'){ factor = 0.6; }
@@ -56,12 +56,25 @@ function shade(hex, factor){
   while(hexOut.length<6) hexOut='0'+hexOut;
   return '#'+hexOut;
 }
-
 function sanitizeSlug(s){
   s = (s||'').toLowerCase();
   s = s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g,'') : s;
   s = s.replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
   return s;
+}
+
+// ======= Tema (Claro/Escuro) =======
+function applyTheme(theme){
+  var t = (theme === 'dark') ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+  var select = qs('#themeSelect');
+  if(select){ select.value = t; }
+}
+function initTheme(){
+  var saved = null;
+  try{ saved = localStorage.getItem(THEME_KEY); }catch(e){}
+  applyTheme(saved || 'light');
 }
 
 // ======= Abas =======
@@ -78,9 +91,11 @@ function setScreenFromHash(){
 
 // ======= Init =======
 window.addEventListener('DOMContentLoaded', function(){
+  initTheme();
   bindEditor();
   setScreenFromHash();
   refreshUI();
+
   // modelos
   qsa('.model-card button').forEach(function(btn){
     btn.addEventListener('click', function(e){
@@ -89,6 +104,22 @@ window.addEventListener('DOMContentLoaded', function(){
       applyModel(modelName);
     });
   });
+
+  // preferências (tema)
+  var savePrefs = qs('#savePrefs');
+  if(savePrefs){
+    savePrefs.addEventListener('click', function(){
+      var themeSelect = qs('#themeSelect');
+      if(themeSelect){ applyTheme(themeSelect.value); alert('Preferências salvas.'); }
+    });
+  }
+  var themeSelect = qs('#themeSelect');
+  if(themeSelect){
+    themeSelect.addEventListener('change', function(){
+      applyTheme(themeSelect.value);
+    });
+  }
+
   // rascunho
   loadDraft();
 });
@@ -120,9 +151,7 @@ function bindEditor(){
   var copyLinkBtn = qs('#copyLink');
   var publishHint = qs('#publishHint');
 
-  if(publishBtn){
-    publishBtn.disabled = (assinaturaStatus !== 'ativa');
-  }
+  if(publishBtn){ publishBtn.disabled = (assinaturaStatus !== 'ativa'); }
   if(publishHint){
     publishHint.textContent = (assinaturaStatus !== 'ativa')
       ? 'Sua assinatura está inativa. Regularize em Meus Pagamentos para publicar.'
@@ -135,7 +164,7 @@ function bindEditor(){
         label: 'Novo botão',
         link: 'https://',
         color: '#2b7a78',
-        textColor: '#ffffff',
+        textColor: '#111827',
         style: 'solid',
         size: 'md',
         radius: 14,
@@ -153,7 +182,7 @@ function bindEditor(){
       b.label = btnText && btnText.value ? btnText.value : 'Botão';
       b.link  = btnLink && btnLink.value ? btnLink.value : 'https://';
       b.color = btnColor && btnColor.value ? btnColor.value : '#2b7a78';
-      b.textColor = btnTextColor && btnTextColor.value ? btnTextColor.value : '#ffffff';
+      b.textColor = btnTextColor && btnTextColor.value ? btnTextColor.value : '#111827';
       b.style = btnStyle && btnStyle.value ? btnStyle.value : 'solid';
       b.size = btnSize && btnSize.value ? btnSize.value : 'md';
       b.radius = btnRadius && btnRadius.value ? Number(btnRadius.value) : 14;
@@ -331,7 +360,7 @@ function refreshUI(){
       a.innerHTML =
         '<div class="card-inner">' +
           '<div class="card-icon" style="background:'+ (b.color || '#2b7a78') +'"></div>' +
-          '<div class="card-label" style="color:'+ (b.textColor || '#ffffff') +'">'+ escapeHtml(b.label) +'</div>' +
+          '<div class="card-label" style="color:'+ (b.textColor || '#111827') +'">'+ escapeHtml(b.label) +'</div>' +
         '</div>';
       pv.appendChild(a);
     });
@@ -356,7 +385,7 @@ function loadToForm(){
     if(btnText) btnText.value = '';
     if(btnLink) btnLink.value = '';
     if(btnColor) btnColor.value = '#2b7a78';
-    if(btnTextColor) btnTextColor.value = '#ffffff';
+    if(btnTextColor) btnTextColor.value = '#111827';
     if(btnStyle) btnStyle.value = 'solid';
     if(btnSize) btnSize.value = 'md';
     if(btnRadius) btnRadius.value = 14;
@@ -367,7 +396,7 @@ function loadToForm(){
   if(btnText) btnText.value = b.label || '';
   if(btnLink) btnLink.value = b.link || '';
   if(btnColor) btnColor.value = b.color || '#2b7a78';
-  if(btnTextColor) btnTextColor.value = b.textColor || '#ffffff';
+  if(btnTextColor) btnTextColor.value = b.textColor || '#111827';
   if(btnStyle) btnStyle.value = b.style || 'solid';
   if(btnSize) btnSize.value = b.size || 'md';
   if(btnRadius) btnRadius.value = (typeof b.radius==='number') ? b.radius : 14;
@@ -382,11 +411,11 @@ function refreshHeader(){
   if(s) s.textContent = state.header.subtitle || '';
   if(header){
     if(state.header.preset === 'solid'){
-      header.style.background = state.header.color || '#1f2937';
+      header.style.background = state.header.color || '#e5e7eb';
     } else if(state.header.preset === 'pattern2'){
-      header.style.background = 'linear-gradient(135deg,#283552,#1b2740)';
+      header.style.background = 'linear-gradient(135deg,#cbd5e1,#94a3b8)'; // funciona bem nos dois temas
     } else {
-      header.style.background = 'linear-gradient(135deg,#1f2937,#111827)';
+      header.style.background = 'var(--phone-header-default)';
     }
   }
 }
@@ -415,7 +444,7 @@ function enableDragSort(list){
   });
 }
 
-// Segurança simples para texto
+// Segurança simples
 function escapeHtml(s){
   return String(s||'').replace(/[&<>"']/g, function(m){
     return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
