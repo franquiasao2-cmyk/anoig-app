@@ -15,6 +15,17 @@
         <span>Painel do Assinante</span>
       </div>
     </div>
+
+    <!-- AUTENTICAÇÃO -->
+    <div id="authBox" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+      <span id="authHello" style="display:none">Olá, <strong id="authEmail"></strong></span>
+      <input id="authEmailInput" type="email" placeholder="seuemail@exemplo.com" style="padding:8px;border-radius:8px;border:1px solid var(--stroke)">
+      <input id="authPassInput" type="password" placeholder="senha" style="padding:8px;border-radius:8px;border:1px solid var(--stroke)">
+      <button id="btnSignUp" class="btn small">Cadastrar</button>
+      <button id="btnSignIn" class="btn small">Entrar</button>
+      <button id="btnSignOut" class="btn small" style="display:none">Sair</button>
+    </div>
+
     <nav class="tabs">
       <a href="#criar" class="tab">Criar</a>
       <a href="#modelos" class="tab">Modelos Prontos</a>
@@ -38,11 +49,11 @@
       <button class="btn" id="btnInitSupa">Iniciar Supabase</button>
       <button class="btn primary" id="btnTestSupa" disabled>Testar conexão</button>
     </div>
-    <small class="muted">⚠️ Isso é só para teste. Depois que funcionar, a gente fixa esses valores no código e remove esta barra.</small>
+    <small class="muted">⚠️ Depois que tudo estiver OK, removemos esta barra.</small>
   </div>
 
   <main id="view">
-    <!-- sua tela Criar existente -->
+    <!-- CRIAR -->
     <section id="view-criar" class="screen">
       <div class="editor">
         <aside class="panel">
@@ -138,8 +149,8 @@
 
           <div class="panel-group">
             <div class="btn-row sticky">
-              <button id="saveDraft" class="btn">Salvar</button>
-              <button id="publish" class="btn primary">Publicar</button>
+              <button id="saveDraft" class="btn" title="Salva no banco (precisa estar logado)">Salvar</button>
+              <button id="publish" class="btn primary" title="Publica no banco (precisa estar logado)">Publicar</button>
               <button id="copyLink" class="btn ghost">Copiar link</button>
             </div>
             <small id="publishHint" class="muted"></small>
@@ -161,7 +172,7 @@
       </div>
     </section>
 
-    <!-- Outras telas -->
+    <!-- OUTRAS TELAS -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
       <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
@@ -193,10 +204,10 @@
       <h2>Meus Dados</h2>
       <form class="form">
         <label>Nome completo
-          <input type="text" placeholder="Seu nome">
+          <input id="meuNome" type="text" placeholder="Seu nome">
         </label>
         <label>E-mail
-          <input type="email" placeholder="seuemail@exemplo.com">
+          <input id="meuEmail" type="email" placeholder="seuemail@exemplo.com" disabled>
         </label>
         <label>Foto / Logo
           <input type="file" accept="image/*">
@@ -244,56 +255,14 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.5 (teste Supabase embutido)</small>
+    <small>© Anoig • v0.6 (Auth + DB)</small>
   </footer>
 
-  <!-- SDK do Supabase e inicialização guiada -->
+  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // Inicializa cliente quando você clicar no botão "Iniciar Supabase"
-    let supa = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const btnInit = document.getElementById('btnInitSupa');
-      const btnTest = document.getElementById('btnTestSupa');
-
-      // Pré-preencheu os campos. Já podemos habilitar o "Iniciar".
-      btnInit.addEventListener('click', () => {
-        const url = (document.getElementById('sbUrl').value || '').trim();
-        const anon = (document.getElementById('sbAnon').value || '').trim();
-        if(!url || !anon){
-          alert('Preencha URL do projeto e Anon key.');
-          return;
-        }
-        supa = supabase.createClient(url, anon);
-        btnTest.disabled = false;
-        alert('Supabase iniciado. Agora clique em "Testar conexão".');
-      });
-
-      btnTest.addEventListener('click', async () => {
-        if(!supa){
-          alert('Clique primeiro em "Iniciar Supabase".');
-          return;
-        }
-        try{
-          const { data, error } = await supa.from('profiles').select('*').limit(1);
-          if(error){
-            alert('Erro: ' + error.message);
-          }else{
-            alert('Conectado! Retorno da tabela profiles: ' + data.length + ' registro(s).');
-          }
-        }catch(e){
-          alert('Falha: ' + e.message);
-        }
-      });
-    });
-
-    // Força carregar a aba criar
-    if(!location.hash){ location.hash = '#criar'; }
-  </script>
-
-  <!-- Seu app -->
-  <script src="app.js?v=5"></script>
+  <!-- Inicialização e app -->
+  <script src="app.js?v=6"></script>
 
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
