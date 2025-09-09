@@ -232,7 +232,13 @@
   <script>
     if(!location.hash){ location.hash = '#criar'; }
   </script>
-  <script src="app.js?v=4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.SUPABASE_URL = "COLE_AQUI_A_URL_DO_PROJETO";
+  window.SUPABASE_ANON = "COLE_AQUI_A_ANON_KEY";
+  window.supa = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
+</script>
+<script src="app.js?v=4"></script>
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
       O JavaScript está desativado. Ative para usar o painel.
