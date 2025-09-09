@@ -23,8 +23,26 @@
     </nav>
   </header>
 
+  <!-- BARRA DE CONFIGURAÇÃO DO SUPABASE (TEMPORÁRIA PARA TESTE) -->
+  <div style="padding:12px; margin:12px; border:1px solid var(--stroke); border-radius:12px; background:var(--surface)">
+    <strong>Conexão Supabase (teste rápido)</strong>
+    <div class="grid-2" style="margin-top:8px">
+      <label>URL do projeto (Project URL)
+        <input id="sbUrl" type="text" value="https://tyhoonmssqxbtktiuwtd.supabase.co" readonly>
+      </label>
+      <label>Anon key (chave pública)
+        <input id="sbAnon" type="text" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI" readonly>
+      </label>
+    </div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn" id="btnInitSupa">Iniciar Supabase</button>
+      <button class="btn primary" id="btnTestSupa" disabled>Testar conexão</button>
+    </div>
+    <small class="muted">⚠️ Isso é só para teste. Depois que funcionar, a gente fixa esses valores no código e remove esta barra.</small>
+  </div>
+
   <main id="view">
-    <!-- De propósito, a primeira tela começa visível -->
+    <!-- sua tela Criar existente -->
     <section id="view-criar" class="screen">
       <div class="editor">
         <aside class="panel">
@@ -143,7 +161,7 @@
       </div>
     </section>
 
-    <!-- Demais telas inicialmente escondidas -->
+    <!-- Outras telas -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
       <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
@@ -226,19 +244,57 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.4 (tema claro + seletor de tema)</small>
+    <small>© Anoig • v0.5 (teste Supabase embutido)</small>
   </footer>
 
+  <!-- SDK do Supabase e inicialização guiada -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Inicializa cliente quando você clicar no botão "Iniciar Supabase"
+    let supa = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnInit = document.getElementById('btnInitSupa');
+      const btnTest = document.getElementById('btnTestSupa');
+
+      // Pré-preencheu os campos. Já podemos habilitar o "Iniciar".
+      btnInit.addEventListener('click', () => {
+        const url = (document.getElementById('sbUrl').value || '').trim();
+        const anon = (document.getElementById('sbAnon').value || '').trim();
+        if(!url || !anon){
+          alert('Preencha URL do projeto e Anon key.');
+          return;
+        }
+        supa = supabase.createClient(url, anon);
+        btnTest.disabled = false;
+        alert('Supabase iniciado. Agora clique em "Testar conexão".');
+      });
+
+      btnTest.addEventListener('click', async () => {
+        if(!supa){
+          alert('Clique primeiro em "Iniciar Supabase".');
+          return;
+        }
+        try{
+          const { data, error } = await supa.from('profiles').select('*').limit(1);
+          if(error){
+            alert('Erro: ' + error.message);
+          }else{
+            alert('Conectado! Retorno da tabela profiles: ' + data.length + ' registro(s).');
+          }
+        }catch(e){
+          alert('Falha: ' + e.message);
+        }
+      });
+    });
+
+    // Força carregar a aba criar
     if(!location.hash){ location.hash = '#criar'; }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  window.SUPABASE_URL = "COLE_AQUI_A_URL_DO_PROJETO";
-  window.SUPABASE_ANON = "COLE_AQUI_A_ANON_KEY";
-  window.supa = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
-</script>
-<script src="app.js?v=4"></script>
+
+  <!-- Seu app -->
+  <script src="app.js?v=5"></script>
+
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
       O JavaScript está desativado. Ative para usar o painel.
