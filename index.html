@@ -24,8 +24,8 @@
   </header>
 
   <main id="view">
-    <!-- Tela: Criar -->
-    <section id="view-criar" class="screen hidden">
+    <!-- De propósito, a primeira tela começa visível -->
+    <section id="view-criar" class="screen">
       <div class="editor">
         <aside class="panel">
           <div class="panel-group">
@@ -145,10 +145,10 @@
       </div>
     </section>
 
-    <!-- Tela: Modelos -->
+    <!-- Demais telas inicialmente escondidas -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
-      <p class="muted">Escolha um modelo. Depois você pode editar/excluir/incluir/reordenar os botões na aba <strong>Criar</strong>.</p>
+      <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
       <div class="models-grid">
         <div class="model-card" data-model="essencial">
           <div class="thumb"></div>
@@ -173,7 +173,6 @@
       </div>
     </section>
 
-    <!-- Tela: Meus Dados -->
     <section id="view-dados" class="screen hidden">
       <h2>Meus Dados</h2>
       <form class="form">
@@ -195,7 +194,6 @@
       </form>
     </section>
 
-    <!-- Tela: Meus Pagamentos -->
     <section id="view-pagamentos" class="screen hidden">
       <h2>Meus Pagamentos</h2>
       <div class="plans">
@@ -224,9 +222,18 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.3 (protótipo estático com design system de botões)</small>
+    <small>© Anoig • v0.3.2</small>
   </footer>
 
-  <script src="app.js"></script>
+  <script>
+    if(!location.hash){ location.hash = '#criar'; }
+  </script>
+  <script src="app.js?v=2"></script>
+
+  <noscript>
+    <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#ffb4b4;">
+      O JavaScript está desativado. Ative para usar o painel.
+    </div>
+  </noscript>
 </body>
 </html>
