@@ -29,6 +29,14 @@
       <div class="editor">
         <aside class="panel">
           <div class="panel-group">
+            <h3>Identidade da página</h3>
+            <label>Slug (link público)
+              <input id="pageSlug" type="text" placeholder="ex.: lucyana">
+            </label>
+            <small class="muted">Seu link ficará: <code>app.anoig.com/page.html#seu-slug</code></small>
+          </div>
+
+          <div class="panel-group">
             <h3>Botões da página</h3>
             <div class="btn-row">
               <button id="addBtn" class="btn primary">+ Adicionar botão</button>
@@ -39,15 +47,53 @@
 
           <div class="panel-group">
             <h3>Editar botão selecionado</h3>
+
             <label>Texto
               <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
             </label>
+
             <label>Link
               <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
             </label>
-            <label>Cor do botão
-              <input id="btnColor" type="color" value="#2b7a78">
-            </label>
+
+            <div class="grid-2">
+              <label>Cor base
+                <input id="btnColor" type="color" value="#2b7a78">
+              </label>
+              <label>Cor do texto
+                <input id="btnTextColor" type="color" value="#ffffff">
+              </label>
+            </div>
+
+            <div class="grid-2">
+              <label>Estilo
+                <select id="btnStyle">
+                  <option value="solid">Sólido</option>
+                  <option value="gradient">Gradiente</option>
+                  <option value="glass">Vidrificado</option>
+                  <option value="outline">Contorno</option>
+                  <option value="fantasy">Fantasia</option>
+                </select>
+              </label>
+
+              <label>Tamanho
+                <select id="btnSize">
+                  <option value="md">Médio</option>
+                  <option value="lg">Grande</option>
+                  <option value="sm">Pequeno</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="grid-2">
+              <label>Raio (arredondamento)
+                <input id="btnRadius" type="range" min="6" max="24" value="14">
+              </label>
+              <label class="checkbox">
+                <input id="btnShadow" type="checkbox" checked> Sombra
+              </label>
+            </div>
+
             <div class="btn-row">
               <button id="applyBtn" class="btn">Aplicar</button>
               <button id="deleteBtn" class="btn danger">Excluir</button>
@@ -78,6 +124,7 @@
             <div class="btn-row sticky">
               <button id="saveDraft" class="btn">Salvar</button>
               <button id="publish" class="btn primary">Publicar</button>
+              <button id="copyLink" class="btn ghost">Copiar link</button>
             </div>
             <small id="publishHint" class="muted"></small>
           </div>
@@ -101,7 +148,7 @@
     <!-- Tela: Modelos -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
-      <p class="muted">Escolha um modelo para começar. Depois você pode editar, excluir, incluir e reordenar botões na aba <strong>Criar</strong>.</p>
+      <p class="muted">Escolha um modelo. Depois você pode editar/excluir/incluir/reordenar os botões na aba <strong>Criar</strong>.</p>
       <div class="models-grid">
         <div class="model-card" data-model="essencial">
           <div class="thumb"></div>
@@ -177,7 +224,7 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.1 (protótipo estático)</small>
+    <small>© Anoig • v0.3 (protótipo estático com design system de botões)</small>
   </footer>
 
   <script src="app.js"></script>

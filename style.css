@@ -40,6 +40,7 @@ body{
 /* Layout principal */
 #view{padding:20px;max-width:1200px;margin:0 auto}
 .screen.hidden{display:none}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
 h2{margin:0 0 12px 0}
 .muted{color:var(--muted)}
@@ -65,10 +66,11 @@ h2{margin:0 0 12px 0}
 }
 .panel-group h3{margin:0 0 8px 0;font-size:14px}
 label{display:flex;flex-direction:column;gap:6px;margin:8px 0}
-input[type="text"],input[type="email"],input[type="url"],input[type="file"],select{
+.checkbox{display:flex;align-items:center;gap:8px;margin:8px 0}
+input[type="text"],input[type="email"],input[type="url"],input[type="file"],select,input[type="color"],input[type="range"]{
   padding:10px;border-radius:10px;border:1px solid var(--stroke);background:#0a1326;color:var(--text)
 }
-.sticky{position:sticky;bottom:0;background:#0e172b;padding-top:12px}
+input[type="range"]{padding:6px}
 
 /* Editor */
 .editor{display:grid;grid-template-columns:360px 1fr;gap:16px}
@@ -88,13 +90,40 @@ input[type="text"],input[type="email"],input[type="url"],input[type="file"],sele
 .pv-subtitle{color:var(--muted);font-size:12px}
 
 .phone-body{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+
+/* Botão/card base */
 .card-btn{
-  border-radius:14px;padding:14px;border:1px solid var(--stroke);background:#0f1a31;cursor:pointer;
+  display:block;text-decoration:none;color:inherit;
+  border-radius:14px;padding:14px;border:1px solid var(--stroke);
+  background:#0f1a31;cursor:pointer;transition:.15s transform ease, .2s box-shadow ease;
 }
-.card-btn:hover{background:#12203b}
+.card-btn:hover{transform:translateY(-1px)}
 .card-inner{display:flex;align-items:center;gap:10px}
 .card-icon{width:24px;height:24px;border-radius:8px;background:#132342}
 .card-label{font-weight:600}
+
+/* Variações (by data-*) */
+.card-btn[data-size="sm"]{padding:10px}
+.card-btn[data-size="lg"]{padding:18px}
+.card-btn[data-shadow="true"]{box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.card-btn[data-style="outline"]{
+  background:transparent;border:1px solid rgba(255,255,255,.25)
+}
+.card-btn[data-style="glass"]{
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(4px);
+}
+.card-btn[data-style="gradient"]{
+  background-image:linear-gradient(135deg, var(--grad-a, #2b7a78), var(--grad-b,#36b7a5));
+  border:0;
+}
+.card-btn[data-style="fantasy"]{
+  background:
+    radial-gradient(1200px 120px at 0% 0%, rgba(255,255,255,.08), transparent 40%),
+    linear-gradient(135deg,#111a2b,#0f1a31);
+  border:1px solid rgba(255,255,255,.08);
+}
 
 /* Lista de botões */
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
