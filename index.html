@@ -19,8 +19,8 @@
     <!-- AUTENTICAÇÃO -->
     <div id="authBox" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
       <span id="authHello" style="display:none">Olá, <strong id="authEmail"></strong></span>
-      <input id="authEmailInput" type="email" placeholder="seuemail@exemplo.com" style="padding:8px;border-radius:8px;border:1px solid var(--stroke)">
-      <input id="authPassInput" type="password" placeholder="senha" style="padding:8px;border-radius:8px;border:1px solid var(--stroke)">
+      <input id="authEmailInput" type="email" placeholder="seuemail@exemplo.com" class="inp">
+      <input id="authPassInput" type="password" placeholder="senha" class="inp">
       <button id="btnSignUp" class="btn small">Cadastrar</button>
       <button id="btnSignIn" class="btn small">Entrar</button>
       <button id="btnSignOut" class="btn small" style="display:none">Sair</button>
@@ -28,6 +28,7 @@
 
     <nav class="tabs">
       <a href="#criar" class="tab">Criar</a>
+      <a href="#projetos" class="tab">Meus Projetos</a>
       <a href="#modelos" class="tab">Modelos Prontos</a>
       <a href="#dados" class="tab">Meus Dados</a>
       <a href="#pagamentos" class="tab">Meus Pagamentos</a>
@@ -35,7 +36,7 @@
   </header>
 
   <!-- BARRA DE CONFIGURAÇÃO DO SUPABASE (TEMPORÁRIA PARA TESTE) -->
-  <div style="padding:12px; margin:12px; border:1px solid var(--stroke); border-radius:12px; background:var(--surface)">
+  <div class="bar-test">
     <strong>Conexão Supabase (teste rápido)</strong>
     <div class="grid-2" style="margin-top:8px">
       <label>URL do projeto (Project URL)
@@ -172,7 +173,31 @@
       </div>
     </section>
 
-    <!-- OUTRAS TELAS -->
+    <!-- PROJETOS -->
+    <section id="view-projetos" class="screen hidden">
+      <h2>Meus Projetos</h2>
+      <div class="filters">
+        <label>Status
+          <select id="fltStatus">
+            <option value="all">Todos</option>
+            <option value="published">Publicados</option>
+            <option value="draft">Rascunhos</option>
+          </select>
+        </label>
+        <label>Mês
+          <select id="fltMonth">
+            <option value="all">Todos os meses</option>
+          </select>
+        </label>
+        <button id="btnReloadProjects" class="btn">Atualizar</button>
+      </div>
+
+      <div id="projectsList" class="projects-grid"></div>
+      <div id="projectsEmpty" class="muted" style="display:none;margin-top:8px">Nenhum projeto encontrado.</div>
+      <small class="muted">Dica: clique em <strong>Editar</strong> para carregar o projeto na aba <em>Criar</em>.</small>
+    </section>
+
+    <!-- MODELOS -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
       <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
@@ -200,6 +225,7 @@
       </div>
     </section>
 
+    <!-- DADOS -->
     <section id="view-dados" class="screen hidden">
       <h2>Meus Dados</h2>
       <form class="form">
@@ -227,6 +253,7 @@
       </form>
     </section>
 
+    <!-- PAGAMENTOS -->
     <section id="view-pagamentos" class="screen hidden">
       <h2>Meus Pagamentos</h2>
       <div class="plans">
@@ -255,14 +282,13 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.6 (Auth + DB)</small>
+    <small>© Anoig • v0.7 (Projetos + filtros)</small>
   </footer>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Inicialização e app -->
-  <script src="app.js?v=6"></script>
+  <!-- App -->
+  <script src="app.js?v=7"></script>
 
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
