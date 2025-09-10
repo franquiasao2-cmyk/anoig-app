@@ -59,52 +59,84 @@
 
           <div class="panel-group">
             <h3>Editar botão selecionado</h3>
-            <label>Texto
+
+            <!-- Tipo do botão -->
+            <div class="grid-2">
+              <label>Tipo do botão
+                <select id="btnKind">
+                  <option value="native">Nativo (CSS)</option>
+                  <option value="svg">SVG (Canva)</option>
+                </select>
+              </label>
+              <label id="svgTemplateWrap" style="display:none">Modelo SVG
+                <select id="svgTemplate">
+                  <!-- opções vêm do svg-templates.js -->
+                </select>
+              </label>
+            </div>
+
+            <!-- Campos em comum -->
+            <label>Texto (rótulo do botão)
               <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
             </label>
             <label>Link
               <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
             </label>
 
-            <div class="grid-2">
-              <label>Cor base
-                <input id="btnColor" type="color" value="#2b7a78">
-              </label>
-              <label>Cor do texto
-                <input id="btnTextColor" type="color" value="#111827">
-              </label>
+            <!-- Controles para botão Nativo (CSS) -->
+            <div id="nativeControls">
+              <div class="grid-2">
+                <label>Cor base
+                  <input id="btnColor" type="color" value="#2b7a78">
+                </label>
+                <label>Cor do texto
+                  <input id="btnTextColor" type="color" value="#111827">
+                </label>
+              </div>
+
+              <div class="grid-2">
+                <label>Estilo
+                  <select id="btnStyle">
+                    <option value="solid">Sólido</option>
+                    <option value="gradient">Gradiente</option>
+                    <option value="glass">Vidrificado</option>
+                    <option value="outline">Contorno</option>
+                    <option value="fantasy">Fantasia</option>
+                  </select>
+                </label>
+                <label>Tamanho
+                  <select id="btnSize">
+                    <option value="md">Médio</option>
+                    <option value="lg">Grande</option>
+                    <option value="sm">Pequeno</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="grid-2">
+                <label>Raio (arredondamento)
+                  <input id="btnRadius" type="range" min="6" max="24" value="14">
+                </label>
+                <label class="checkbox">
+                  <input id="btnShadow" type="checkbox" checked> Sombra
+                </label>
+              </div>
             </div>
 
-            <div class="grid-2">
-              <label>Estilo
-                <select id="btnStyle">
-                  <option value="solid">Sólido</option>
-                  <option value="gradient">Gradiente</option>
-                  <option value="glass">Vidrificado</option>
-                  <option value="outline">Contorno</option>
-                  <option value="fantasy">Fantasia</option>
-                </select>
-              </label>
-
-              <label>Tamanho
-                <select id="btnSize">
-                  <option value="md">Médio</option>
-                  <option value="lg">Grande</option>
-                  <option value="sm">Pequeno</option>
-                </select>
-              </label>
+            <!-- Controles para botão SVG (Canva) -->
+            <div id="svgControls" style="display:none">
+              <div class="grid-2">
+                <label>Cor principal (preenche o fundo do SVG)
+                  <input id="svgColor" type="color" value="#2b7a78">
+                </label>
+                <label>Cor do texto (dentro do SVG)
+                  <input id="svgTextColor" type="color" value="#ffffff">
+                </label>
+              </div>
+              <small class="muted">Este botão usa seu arquivo SVG como base. Texto e cores são aplicados no próprio SVG.</small>
             </div>
 
-            <div class="grid-2">
-              <label>Raio (arredondamento)
-                <input id="btnRadius" type="range" min="6" max="24" value="14">
-              </label>
-              <label class="checkbox">
-                <input id="btnShadow" type="checkbox" checked> Sombra
-              </label>
-            </div>
-
-            <div class="btn-row">
+            <div class="btn-row" style="margin-top:8px">
               <button id="applyBtn" class="btn">Aplicar</button>
               <button id="deleteBtn" class="btn danger">Excluir</button>
             </div>
@@ -264,13 +296,15 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.8 (sem barra de teste)</small>
+    <small>© Anoig • v0.9 (SVG Canva editável)</small>
   </footer>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Templates SVG (NOVO) -->
+  <script src="svg-templates.js?v=1"></script>
   <!-- App -->
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 
   <noscript>
     <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">

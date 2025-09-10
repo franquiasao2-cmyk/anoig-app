@@ -34,31 +34,31 @@ function setScreenFromHash(){
   if(hash==='projetos'){ initProjectsView(); }
 }
 
-/* ============ MODELOS PRONTOS ============ */
+/* ============ MODELOS PRONTOS (Nativo CSS) ============ */
 var presetModels = {
   essencial: [
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'solid', size:'md', radius:14, shadow:true },
-    { label: 'Instagram', link: 'https://instagram.com/seucliente', color: '#E1306C', textColor:'#ffffff', style:'gradient', size:'md', radius:14, shadow:true },
-    { label: 'Site', link: 'https://exemplo.com', color: '#2b7a78', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
+    { kind:'native', label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'solid', size:'md', radius:14, shadow:true },
+    { kind:'native', label: 'Instagram', link: 'https://instagram.com/seucliente', color: '#E1306C', textColor:'#ffffff', style:'gradient', size:'md', radius:14, shadow:true },
+    { kind:'native', label: 'Site', link: 'https://exemplo.com', color: '#2b7a78', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
   ],
   promo: [
-    { label: 'Cupom -20%', link: 'https://exemplo.com/cupom', color: '#f59e0b', textColor:'#111827', style:'solid', size:'lg', radius:16, shadow:true },
-    { label: 'Compre agora', link: 'https://loja.com/produto', color: '#ef4444', textColor:'#ffffff', style:'gradient', size:'md', radius:16, shadow:true },
-    { label: 'WhatsApp Vendas', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
+    { kind:'native', label: 'Cupom -20%', link: 'https://exemplo.com/cupom', color: '#f59e0b', textColor:'#111827', style:'solid', size:'lg', radius:16, shadow:true },
+    { kind:'native', label: 'Compre agora', link: 'https://loja.com/produto', color: '#ef4444', textColor:'#ffffff', style:'gradient', size:'md', radius:16, shadow:true },
+    { kind:'native', label: 'WhatsApp Vendas', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
   ],
   servicos: [
-    { label: 'Agendar consulta', link: 'https://agenda.com', color: '#3b82f6', textColor:'#ffffff', style:'solid', size:'md', radius:14, shadow:true },
-    { label: 'Orçamento', link: 'https://formulario.com', color: '#9333ea', textColor:'#ffffff', style:'outline', size:'md', radius:14, shadow:false },
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
+    { kind:'native', label: 'Agendar consulta', link: 'https://agenda.com', color: '#3b82f6', textColor:'#ffffff', style:'solid', size:'md', radius:14, shadow:true },
+    { kind:'native', label: 'Orçamento', link: 'https://formulario.com', color: '#9333ea', textColor:'#ffffff', style:'outline', size:'md', radius:14, shadow:false },
+    { kind:'native', label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'glass', size:'md', radius:14, shadow:false }
   ],
   restaurante: [
-    { label: 'Cardápio', link: 'https://menu.delivery', color: '#ef4444', textColor:'#ffffff', style:'fantasy', size:'lg', radius:18, shadow:true },
-    { label: 'Peça no iFood', link: 'https://ifood.com', color: '#f97316', textColor:'#111827', style:'solid', size:'md', radius:16, shadow:true },
-    { label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
+    { kind:'native', label: 'Cardápio', link: 'https://menu.delivery', color: '#ef4444', textColor:'#ffffff', style:'fantasy', size:'lg', radius:18, shadow:true },
+    { kind:'native', label: 'Peça no iFood', link: 'https://ifood.com', color: '#f97316', textColor:'#111827', style:'solid', size:'md', radius:16, shadow:true },
+    { kind:'native', label: 'WhatsApp', link: 'https://wa.me/5591...', color: '#25D366', textColor:'#0f172a', style:'outline', size:'md', radius:14, shadow:false }
   ]
 };
 
-/* ============ AUTENTICAÇÃO ============ */
+/* ============ AUTENTICAÇÃO (igual antes) ============ */
 async function getCurrentUser(){ const { data:{ user } } = await supa.auth.getUser(); return user||null; }
 function setAuthUI(user){
   const hello=qs('#authHello'), helloEmail=qs('#authEmail');
@@ -123,7 +123,7 @@ async function savePreferences(){
   alert('Preferências salvas.');
 }
 
-/* ============ SALVAR / PUBLICAR ============ */
+/* ============ SALVAR / PUBLICAR (sem mudanças de lógica) ============ */
 function validateDraft(opts){ opts=opts||{}; var errs=[]; if(!state.slug||state.slug.length<2) errs.push('Slug inválido.'); if(!state.header.title||state.header.title.replace(/\s+/g,'').length<2) errs.push('Título obrigatório.'); if(!Array.isArray(state.buttons)||state.buttons.length===0) errs.push('Crie ao menos 1 botão.'); state.buttons.forEach(function(b,i){ if(!b.label||!b.link) errs.push('Botão '+(i+1)+': texto e link são obrigatórios.'); if(b.link&&!/^https?:\/\//i.test(b.link)) errs.push('Botão '+(i+1)+': link deve começar com http(s)://'); }); if(errs.length){ if(!opts.silent) alert('Antes de salvar/publicar:\n\n- '+errs.join('\n- ')); return false; } return true; }
 
 async function saveToDatabase(){
@@ -136,8 +136,27 @@ async function saveToDatabase(){
   if(ex && ex.length){ pageId=ex[0].id; const { error: upErr } = await supa.from('pages').update(base).eq('id',pageId).eq('owner_id',user.id); if(upErr){ alert('Erro atualizando página: '+upErr.message); return; } }
   else { const { data: ins, error: insErr } = await supa.from('pages').insert(base).select('id').single(); if(insErr){ alert('Erro criando página: '+insErr.message); return; } pageId=ins.id; }
 
+  // substitui todos os botões
   await supa.from('buttons').delete().eq('page_id',pageId);
-  const payload = state.buttons.map((b,idx)=>({ page_id:pageId, label:b.label, url:b.link, color:b.color||'#2b7a78', text_color:b.textColor||'#111827', style:b.style||'solid', size:b.size||'md', radius:b.radius??14, shadow:!!b.shadow, order_index:idx }));
+  const payload = state.buttons.map((b,idx)=>({
+    page_id:pageId,
+    // comuns
+    label:b.label,
+    url:b.link,
+    order_index:idx,
+    // nativo
+    color:b.color||null,
+    text_color:b.textColor||null,
+    style:b.style||null,
+    size:b.size||null,
+    radius: (b.radius ?? null),
+    shadow: (typeof b.shadow==='boolean'? b.shadow : null),
+    // svg
+    kind: b.kind || 'native',
+    svg_template_key: b.svgTemplateKey || null,
+    svg_color: b.svgColor || null,
+    svg_text_color: b.svgTextColor || null
+  }));
   const { error: btnErr } = await supa.from('buttons').insert(payload);
   if(btnErr){ alert('Erro salvando botões: '+btnErr.message); return; }
   alert('Rascunho salvo no banco!');
@@ -156,30 +175,43 @@ async function publishPage(){
   if(location.hash==='#projetos') initProjectsView(true);
 }
 
-/* ============ CARREGAR PROJETO PARA EDITAR ============ */
+/* ============ CARREGAR PROJETO PARA EDITAR (inclui campos SVG) ============ */
 async function loadPageForEditing(pageId){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta.'); return; }
   const { data: page, error: pErr } = await supa.from('pages').select('*').eq('id',pageId).eq('owner_id',user.id).single();
   if(pErr){ alert('Erro lendo página: '+pErr.message); return; }
   const { data: buttons, error: bErr } = await supa.from('buttons').select('*').eq('page_id',pageId).order('order_index',{ascending:true});
   if(bErr){ alert('Erro lendo botões: '+bErr.message); return; }
+
   state.slug=page.slug;
   state.header.title=page.title||'Título da Página';
   state.header.subtitle=page.subtitle||'';
   state.header.preset=page.header_preset||'pattern1';
   state.header.color=page.header_color||'#e5e7eb';
-  state.buttons=(buttons||[]).map(b=>({ label:b.label, link:b.url, color:b.color, textColor:b.text_color, style:b.style, size:b.size, radius:b.radius, shadow:b.shadow }));
+  state.buttons=(buttons||[]).map(b=>({
+    // comuns
+    kind: b.kind || 'native',
+    label:b.label, link:b.url,
+    // nativo
+    color:b.color||'#2b7a78', textColor:b.text_color||'#111827', style:b.style||'solid', size:b.size||'md', radius:b.radius??14, shadow: !!b.shadow,
+    // svg
+    svgTemplateKey: b.svg_template_key || null,
+    svgColor: b.svg_color || '#2b7a78',
+    svgTextColor: b.svg_text_color || '#ffffff'
+  }));
   state.selectedIndex=-1;
+
   if(qs('#pageSlug')) qs('#pageSlug').value=state.slug;
   if(qs('#pageTitle')) qs('#pageTitle').value=state.header.title;
   if(qs('#pageSubtitle')) qs('#pageSubtitle').value=state.header.subtitle;
   if(qs('#headerPreset')) qs('#headerPreset').value=state.header.preset;
   if(qs('#headerColor')) qs('#headerColor').value=state.header.color;
+
   location.hash='#criar';
   refreshUI();
 }
 
-/* ============ PROJETOS (lista + filtros) ============ */
+/* ============ PROJETOS (sem mudanças) ============ */
 let _projectsCache = [];
 async function fetchMyPages(){
   const user=await getCurrentUser(); if(!user) return [];
@@ -256,27 +288,99 @@ async function initProjectsView(forceRefresh){
   renderProjects(_projectsCache);
 }
 
-/* ============ UI DO EDITOR ============ */
+/* ============ EDITOR (agora com campos SVG) ============ */
 function bindEditor(){
-  var addBtn=qs('#addBtn'), applyBtn=qs('#applyBtn'), deleteBtn=qs('#deleteBtn');
-  var btnText=qs('#btnText'), btnLink=qs('#btnLink'), btnColor=qs('#btnColor'), btnTextColor=qs('#btnTextColor'), btnStyle=qs('#btnStyle'), btnSize=qs('#btnSize'), btnRadius=qs('#btnRadius'), btnShadow=qs('#btnShadow');
-  var pageTitle=qs('#pageTitle'), pageSubtitle=qs('#pageSubtitle'), headerPreset=qs('#headerPreset'), headerColor=qs('#headerColor'), pageSlug=qs('#pageSlug');
-  var saveDraftBtn=qs('#saveDraft'), publishBtn=qs('#publish'), copyLinkBtn=qs('#copyLink');
+  const addBtn=qs('#addBtn'), applyBtn=qs('#applyBtn'), deleteBtn=qs('#deleteBtn');
+  const btnText=qs('#btnText'), btnLink=qs('#btnLink');
+  const btnKind=qs('#btnKind'), svgTemplate=qs('#svgTemplate'), svgTemplateWrap=qs('#svgTemplateWrap');
+  const nativeControls=qs('#nativeControls'), svgControls=qs('#svgControls');
 
-  if(addBtn){ addBtn.addEventListener('click', function(){ state.buttons.push({label:'Novo botão', link:'https://', color:'#2b7a78', textColor:'#111827', style:'solid', size:'md', radius:14, shadow:true}); state.selectedIndex=state.buttons.length-1; refreshUI(); }); }
-  if(applyBtn){ applyBtn.addEventListener('click', function(){ if(state.selectedIndex<0) return; var b=state.buttons[state.selectedIndex]; b.label=btnText.value||'Botão'; b.link=btnLink.value||'https://'; b.color=btnColor.value||'#2b7a78'; b.textColor=btnTextColor.value||'#111827'; b.style=btnStyle.value||'solid'; b.size=btnSize.value||'md'; b.radius=Number(btnRadius.value||14); b.shadow=!!btnShadow.checked; refreshUI(); }); }
-  if(deleteBtn){ deleteBtn.addEventListener('click', function(){ if(state.selectedIndex<0) return; state.buttons.splice(state.selectedIndex,1); state.selectedIndex=-1; refreshUI(); }); }
-  if(pageTitle){ pageTitle.addEventListener('input', e=>{ state.header.title=e.target.value||'Título da Página'; refreshHeader(); }); }
-  if(pageSubtitle){ pageSubtitle.addEventListener('input', e=>{ state.header.subtitle=e.target.value||''; refreshHeader(); }); }
-  if(headerPreset){ headerPreset.addEventListener('change', e=>{ state.header.preset=e.target.value; refreshHeader(); }); }
-  if(headerColor){ headerColor.addEventListener('input', e=>{ state.header.color=e.target.value; refreshHeader(); }); }
-  if(pageSlug){ pageSlug.addEventListener('input', e=>{ state.slug=sanitizeSlug(e.target.value); }); }
+  // nativo
+  const btnColor=qs('#btnColor'), btnTextColor=qs('#btnTextColor'), btnStyle=qs('#btnStyle'), btnSize=qs('#btnSize'), btnRadius=qs('#btnRadius'), btnShadow=qs('#btnShadow');
+  // svg
+  const svgColor=qs('#svgColor'), svgTextColor=qs('#svgTextColor');
+
+  const pageTitle=qs('#pageTitle'), pageSubtitle=qs('#pageSubtitle'), headerPreset=qs('#headerPreset'), headerColor=qs('#headerColor'), pageSlug=qs('#pageSlug');
+  const saveDraftBtn=qs('#saveDraft'), publishBtn=qs('#publish'), copyLinkBtn=qs('#copyLink');
+
+  // popular dropdown de modelos SVG
+  if(svgTemplates && svgTemplate){
+    svgTemplate.innerHTML = Object.keys(svgTemplates).map(k=>`<option value="${k}">${escapeHtml(svgTemplates[k].title||k)}</option>`).join('');
+  }
+
+  if(btnKind){
+    btnKind.addEventListener('change', ()=>{
+      const isSvg = btnKind.value === 'svg';
+      svgTemplateWrap.style.display = isSvg ? '' : 'none';
+      svgControls.style.display = isSvg ? '' : 'none';
+      nativeControls.style.display = isSvg ? 'none' : '';
+    });
+  }
+
+  if(addBtn){
+    addBtn.addEventListener('click', function(){
+      state.buttons.push({
+        kind:'native',
+        label:'Novo botão',
+        link:'https://',
+        color:'#2b7a78',
+        textColor:'#111827',
+        style:'solid',
+        size:'md',
+        radius:14,
+        shadow:true,
+        // svg defaults
+        svgTemplateKey: Object.keys(svgTemplates||{})[0] || null,
+        svgColor:'#2b7a78',
+        svgTextColor:'#ffffff'
+      });
+      state.selectedIndex = state.buttons.length - 1;
+      refreshUI();
+    });
+  }
+  if(applyBtn){
+    applyBtn.addEventListener('click', function(){
+      if(state.selectedIndex < 0) return;
+      const b = state.buttons[state.selectedIndex];
+      // comuns
+      b.kind = btnKind.value || 'native';
+      b.label = btnText.value || 'Botão';
+      b.link  = btnLink.value || 'https://';
+      if(b.kind === 'svg'){
+        b.svgTemplateKey = svgTemplate.value || b.svgTemplateKey;
+        b.svgColor = svgColor.value || '#2b7a78';
+        b.svgTextColor = svgTextColor.value || '#ffffff';
+      }else{
+        b.color = btnColor.value || '#2b7a78';
+        b.textColor = btnTextColor.value || '#111827';
+        b.style = btnStyle.value || 'solid';
+        b.size = btnSize.value || 'md';
+        b.radius = Number(btnRadius.value || 14);
+        b.shadow = !!btnShadow.checked;
+      }
+      refreshUI();
+    });
+  }
+  if(deleteBtn){
+    deleteBtn.addEventListener('click', function(){
+      if(state.selectedIndex < 0) return;
+      state.buttons.splice(state.selectedIndex, 1);
+      state.selectedIndex = -1;
+      refreshUI();
+    });
+  }
+
+  if(pageTitle){ pageTitle.addEventListener('input', e => { state.header.title = e.target.value || 'Título da Página'; refreshHeader(); }); }
+  if(pageSubtitle){ pageSubtitle.addEventListener('input', e => { state.header.subtitle = e.target.value || ''; refreshHeader(); }); }
+  if(headerPreset){ headerPreset.addEventListener('change', e => { state.header.preset = e.target.value; refreshHeader(); }); }
+  if(headerColor){ headerColor.addEventListener('input', e => { state.header.color = e.target.value; refreshHeader(); }); }
+  if(pageSlug){ pageSlug.addEventListener('input', e => { state.slug = sanitizeSlug(e.target.value); }); }
 
   if(saveDraftBtn){ saveDraftBtn.addEventListener('click', saveToDatabase); }
   if(publishBtn){ publishBtn.addEventListener('click', publishPage); }
   if(copyLinkBtn){ copyLinkBtn.addEventListener('click', copyPublicLink); }
 
-  var list=qs('#buttonsList'); if(list){ enableDragSort(list); }
+  var list = qs('#buttonsList'); if(list){ enableDragSort(list); }
 
   // Filtros projetos
   const fltStatus=qs('#fltStatus'), fltMonth=qs('#fltMonth'), btnReload=qs('#btnReloadProjects');
@@ -285,43 +389,104 @@ function bindEditor(){
   if(btnReload) btnReload.addEventListener('click', ()=>initProjectsView(true));
 }
 
+/* ===== Renderização do preview ===== */
+function renderNativeButton(b){
+  const a=document.createElement('a');
+  a.className='card-btn'; a.href=b.link||'#'; a.target='_blank';
+  a.style.borderRadius=(b.radius||14)+'px';
+  a.setAttribute('data-style', b.style||'solid');
+  a.setAttribute('data-size', b.size||'md');
+  a.setAttribute('data-shadow', b.shadow?'true':'false');
+  a.style.setProperty('--grad-a', b.color||'#2b7a78');
+  a.style.setProperty('--grad-b', shade(b.color||'#2b7a78',0.6));
+  if(b.style==='solid'){ a.style.background=b.color||'#2b7a78'; a.style.border='0'; }
+  else if(b.style==='outline'){ a.style.background='transparent'; }
+  a.innerHTML='<div class="card-inner"><div class="card-icon" style="background:'+ (b.color||'#2b7a78') +'"></div><div class="card-label" style="color:'+ (b.textColor||'#111827') +'">'+escapeHtml(b.label)+'</div></div>';
+  return a;
+}
+function renderSvgButton(b){
+  const tpl = (svgTemplates && svgTemplates[b.svgTemplateKey]) ? svgTemplates[b.svgTemplateKey] : null;
+  const a = document.createElement('a');
+  a.href=b.link||'#'; a.target='_blank'; a.style.display='block';
+  // aplica substituições no SVG
+  const svg = (tpl ? tpl.svg : `<svg width="320" height="48"><rect width="100%" height="100%" rx="12" fill="#2b7a78"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, Arial" font-weight="700" font-size="16" fill="#fff">{LABEL}</text></svg>`)
+    .replaceAll('{PRIMARY}', b.svgColor||'#2b7a78')
+    .replaceAll('{TEXT}', b.svgTextColor||'#ffffff')
+    .replaceAll('{LABEL}', escapeHtml(b.label||'Botão'));
+  a.innerHTML = svg;
+  return a;
+}
+
 function refreshUI(){
+  // lista
   var list=qs('#buttonsList');
   if(list){
     list.innerHTML='';
     state.buttons.forEach(function(b,idx){
       var li=document.createElement('li'); li.draggable=true;
       li.innerHTML='<div class="item-left"><span class="item-handle">≡</span><span>'+escapeHtml(b.label)+'</span></div><div class="item-actions"><button class="btn small">Editar</button></div>';
-      li.querySelector('.btn').addEventListener('click', function(){ state.selectedIndex=idx; loadToForm(); });
+      li.querySelector('.btn').addEventListener('click', function(){
+        state.selectedIndex=idx; loadToForm();
+      });
       li.setAttribute('data-index', String(idx));
       list.appendChild(li);
     });
   }
+  // preview
   var pv=qs('#pvButtons');
   if(pv){
     pv.innerHTML='';
     state.buttons.forEach(function(b){
-      var a=document.createElement('a');
-      a.className='card-btn'; a.href=b.link||'#'; a.target='_blank'; a.style.borderRadius=(b.radius||14)+'px';
-      a.setAttribute('data-style', b.style||'solid'); a.setAttribute('data-size', b.size||'md'); a.setAttribute('data-shadow', b.shadow?'true':'false');
-      a.style.setProperty('--grad-a', b.color||'#2b7a78'); a.style.setProperty('--grad-b', shade(b.color||'#2b7a78',0.6));
-      if(b.style==='solid'){ a.style.background=b.color||'#2b7a78'; a.style.border='0'; }
-      else if(b.style==='outline'){ a.style.background='transparent'; }
-      a.innerHTML='<div class="card-inner"><div class="card-icon" style="background:'+ (b.color||'#2b7a78') +'"></div><div class="card-label" style="color:'+ (b.textColor||'#111827') +'">'+escapeHtml(b.label)+'</div></div>';
-      pv.appendChild(a);
+      const node = (b.kind==='svg') ? renderSvgButton(b) : renderNativeButton(b);
+      pv.appendChild(node);
     });
   }
   loadToForm(); refreshHeader();
 }
+
 function loadToForm(){
   var i=state.selectedIndex;
-  var btnText=qs('#btnText'), btnLink=qs('#btnLink'), btnColor=qs('#btnColor'), btnTextColor=qs('#btnTextColor'), btnStyle=qs('#btnStyle'), btnSize=qs('#btnSize'), btnRadius=qs('#btnRadius'), btnShadow=qs('#btnShadow');
+  const btnKind=qs('#btnKind'), svgTemplate=qs('#svgTemplate'), svgTemplateWrap=qs('#svgTemplateWrap');
+  const nativeControls=qs('#nativeControls'), svgControls=qs('#svgControls');
+  const btnText=qs('#btnText'), btnLink=qs('#btnLink');
+  const btnColor=qs('#btnColor'), btnTextColor=qs('#btnTextColor'), btnStyle=qs('#btnStyle'), btnSize=qs('#btnSize'), btnRadius=qs('#btnRadius'), btnShadow=qs('#btnShadow');
+  const svgColor=qs('#svgColor'), svgTextColor=qs('#svgTextColor');
+
   if(i<0 || !state.buttons[i]){
-    if(btnText) btnText.value=''; if(btnLink) btnLink.value=''; if(btnColor) btnColor.value='#2b7a78'; if(btnTextColor) btnTextColor.value='#111827'; if(btnStyle) btnStyle.value='solid'; if(btnSize) btnSize.value='md'; if(btnRadius) btnRadius.value=14; if(btnShadow) btnShadow.checked=true; return;
+    // reset
+    if(btnKind) btnKind.value='native';
+    if(svgTemplate) svgTemplate.value=Object.keys(svgTemplates||{})[0]||'';
+    if(btnText) btnText.value=''; if(btnLink) btnLink.value='';
+    if(btnColor) btnColor.value='#2b7a78'; if(btnTextColor) btnTextColor.value='#111827';
+    if(btnStyle) btnStyle.value='solid'; if(btnSize) btnSize.value='md';
+    if(btnRadius) btnRadius.value=14; if(btnShadow) btnShadow.checked=true;
+    if(svgColor) svgColor.value='#2b7a78'; if(svgTextColor) svgTextColor.value='#ffffff';
+    svgTemplateWrap.style.display='none'; svgControls.style.display='none'; nativeControls.style.display='';
+    return;
   }
   var b=state.buttons[i];
-  if(btnText) btnText.value=b.label||''; if(btnLink) btnLink.value=b.link||''; if(btnColor) btnColor.value=b.color||'#2b7a78'; if(btnTextColor) btnTextColor.value=b.textColor||'#111827'; if(btnStyle) btnStyle.value=b.style||'solid'; if(btnSize) btnSize.value=b.size||'md'; if(btnRadius) btnRadius.value=(typeof b.radius==='number')?b.radius:14; if(btnShadow) btnShadow.checked=!!b.shadow;
+
+  if(btnKind) btnKind.value=b.kind||'native';
+  const isSvg = (b.kind==='svg');
+  svgTemplateWrap.style.display=isSvg?'':'none';
+  svgControls.style.display=isSvg?'':'none';
+  nativeControls.style.display=isSvg?'none':'';
+
+  if(svgTemplate && b.svgTemplateKey) svgTemplate.value=b.svgTemplateKey;
+  if(btnText) btnText.value=b.label||''; if(btnLink) btnLink.value=b.link||'';
+  if(!isSvg){
+    if(btnColor) btnColor.value=b.color||'#2b7a78';
+    if(btnTextColor) btnTextColor.value=b.textColor||'#111827';
+    if(btnStyle) btnStyle.value=b.style||'solid';
+    if(btnSize) btnSize.value=b.size||'md';
+    if(btnRadius) btnRadius.value=(typeof b.radius==='number')?b.radius:14;
+    if(btnShadow) btnShadow.checked=!!b.shadow;
+  }else{
+    if(svgColor) svgColor.value=b.svgColor||'#2b7a78';
+    if(svgTextColor) svgTextColor.value=b.svgTextColor||'#ffffff';
+  }
 }
+
 function refreshHeader(){
   var header=qs('#phoneHeader'); var t=qs('#pvTitle'); var s=qs('#pvSubtitle');
   if(t) t.textContent=state.header.title||'Título da Página';
@@ -332,6 +497,7 @@ function refreshHeader(){
     else { header.style.background='var(--phone-header-default)'; }
   }
 }
+
 function enableDragSort(list){
   var dragEl=null;
   list.addEventListener('dragstart', function(e){ dragEl=e.target.closest('li'); if(e.dataTransfer) e.dataTransfer.effectAllowed='move'; });
@@ -350,7 +516,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if(!location.hash){ location.hash='#criar'; }
   initTheme(); bindEditor(); setScreenFromHash();
 
-  // Modelos
+  // Modelos (nativos)
   qsa('.model-card button').forEach(btn=>{
     btn.addEventListener('click', e=>{
       var card=e.currentTarget.closest('.model-card'); var modelName=card?card.getAttribute('data-model'):''; var model=presetModels[modelName];
