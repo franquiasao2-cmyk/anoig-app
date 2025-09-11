@@ -4,6 +4,5 @@ RewriteEngine On
 RewriteCond %{REQUEST_URI} ^/$
 RewriteRule ^$ /login.html [R=301,L]
 
-# Opcional: se quiser servir login.html como página inicial sem redirecionar,
-# use a linha abaixo em vez das 3 acima (comente as 3 acima e descomente esta):
-# DirectoryIndex login.html index.html
+# Também serve login.html como página inicial (caso mod_rewrite não esteja ativo)
+DirectoryIndex login.html index.html
