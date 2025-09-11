@@ -141,3 +141,26 @@ input[type=color] { padding: 0; height: 36px; }
 
 /* RODAPÉ */
 .foot { text-align: center; padding: 12px; color: var(--muted); font-size: 0.8em; }
+
+/* AVISOS */
+.warn-banner {
+  background: #fff7ed; /* laranja claro */
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 12px 0;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  main { padding: 12px 8px; }
+  .topbar { flex-wrap: wrap; gap: 8px; }
+  .tabs { width: 100%; overflow-x: auto; white-space: nowrap; }
+  .tabs a { margin: 0 8px 0 0; display: inline-block; }
+  .editor { flex-direction: column; }
+  .panel { width: 100%; max-width: none; }
+  .preview { width: 100%; justify-content: stretch; }
+  .phone { width: 100%; max-width: 420px; margin: 0 auto; }
+  .models-grid .model-card { min-width: 140px; }
+}

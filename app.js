@@ -123,6 +123,17 @@ function setAuthUI(user){
     else hint.textContent='';
   }
   const meuEmail=qs('#meuEmail'); if(meuEmail) meuEmail.value=user?(user.email||''):'';
+  // Status de verificação de e-mail
+  const emailStatus=qs('#emailStatus'); const resendBtn=qs('#resendConfirm');
+  const isVerified = !!(user && (user.email_confirmed_at || user.confirmed_at));
+  if(emailStatus){ emailStatus.textContent = isVerified ? 'E-mail verificado.' : 'E-mail não verificado.'; }
+  if(resendBtn){ resendBtn.style.display = isVerified ? 'none' : 'inline-block'; }
+  const verifyBanner=qs('#verifyBanner'); if(verifyBanner){ verifyBanner.classList.toggle('hidden-soft', isVerified); }
+  // Preenche campos do perfil (Meus Dados)
+  const meta = (user && user.user_metadata) || {};
+  const meuNome=qs('#meuNome'); if(meuNome) meuNome.value = meta.full_name || '';
+  const meuWhats=qs('#meuWhatsapp'); if(meuWhats) meuWhats.value = meta.whatsapp || '';
+  const meuEnd=qs('#meuEndereco'); if(meuEnd) meuEnd.value = meta.address || '';
 }
 
 /* ---------- Header (Etapa 1) ---------- */
@@ -484,6 +495,7 @@ async function saveToDatabase(){
 
 async function publishPage(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para publicar.'); return; }
+  if(!(user.email_confirmed_at||user.confirmed_at)){ alert('Confirme seu e-mail antes de publicar.'); return; }
   if(assinaturaStatus!=='ativa'){ alert('Assinatura inativa.'); return; }
   if(!supa){ alert('Supabase indisponÃ­vel'); return; }
   if(!validateDraft()) return;
@@ -603,7 +615,8 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   try { bindHeaderUI(); refreshHeader(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindHeaderUI'); }
   try { bindButtonsUI(); refreshButtonsUI(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindButtonsUI'); }
-  try { bindIdentity(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindIdentity'); }
+  
+  try { bindAccountPrefs(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
 
   // Vitrine da aba Modelos (se existir)
   qsa('.model-card button').forEach(btn=>{
@@ -616,7 +629,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   // Auth
   try {
-    const u=await getCurrentUser(); setAuthUI(u);
+    const u=await getCurrentUser(); setAuthUI(u); enforcePublishGuard(u);
     const up=qs('#btnSignUp'), si=qs('#btnSignIn'), so=qs('#btnSignOut');
     // Direciona para páginas dedicadas de auth
     up && up.addEventListener('click', ()=>{ location.href='signup.html'; });
@@ -627,6 +640,85 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
 window.addEventListener('hashchange', setScreenFromHash);
 
+// Garante regras para publicar (login, assinatura, e-mail verificado)
+function enforcePublishGuard(user){
+  const pubBtn=qs('#publish'), hint=qs('#publishHint');
+  const verifyBanner=qs('#verifyBanner');
+  const resendBtn=qs('#resendConfirm');
+  const emailStatus=qs('#emailStatus');
+  const signed=!!user;
+  const isVerified = !!(user && (user.email_confirmed_at || user.confirmed_at));
+  if(pubBtn) pubBtn.disabled = !signed || (assinaturaStatus!=='ativa') || !isVerified;
+  if(hint){
+    if(!signed) hint.textContent='Faça login para salvar e publicar.';
+    else if(assinaturaStatus!=='ativa') hint.textContent='Assinatura inativa.';
+    else if(!isVerified) hint.textContent='Confirme seu e-mail para publicar.';
+    else hint.textContent='';
+  }
+  if(verifyBanner) verifyBanner.classList.toggle('hidden-soft', isVerified);
+  if(resendBtn) resendBtn.style.display = isVerified ? 'none' : 'inline-block';
+  if(emailStatus) emailStatus.textContent = isVerified ? 'E-mail verificado.' : 'E-mail não verificado.';
+}
+
+/* ---------- Preferências / Dados ---------- */
+function bindAccountPrefs(){
+  __devlog && __devlog('bindAccountPrefs');
+  const themeSel = qs('#themeSelect');
+  const saveBtn = qs('#savePrefs');
+  const resendBtn = qs('#resendConfirm');
+  if(themeSel){ themeSel.addEventListener('change', ()=> applyTheme(themeSel.value)); }
+  if(saveBtn){
+    saveBtn.addEventListener('click', async ()=>{
+      try{
+        if(themeSel) applyTheme(themeSel.value);
+        const full_name = (qs('#meuNome')?.value||'').trim();
+        const whatsapp  = (qs('#meuWhatsapp')?.value||'').trim();
+        const address   = (qs('#meuEndereco')?.value||'').trim();
+        if(supa){
+          const { error } = await supa.auth.updateUser({ data: { full_name, whatsapp, address } });
+          if(error){ alert('Erro ao salvar dados: '+error.message); return; }
+        }
+        alert('Preferências salvas.');
+      }catch(e){ console.error(e); alert('Falha ao salvar preferências.'); }
+    });
+  }
+  const resendTopBtn = qs('#resendConfirmTop');
+  if(resendTopBtn){
+    resendTopBtn.addEventListener('click', async ()=>{
+      try{
+        resendTopBtn.disabled = true;
+        const u = await getCurrentUser();
+        const email = u && u.email;
+        if(!email){ alert('Fa�a login novamente.'); return; }
+        if(!supa || !supa.auth || typeof supa.auth.resend !== 'function'){
+          alert('Reenvio de confirma��o indispon�vel no momento.'); return;
+        }
+        const { error } = await supa.auth.resend({ type:'signup', email });
+        if(error){ alert('Erro ao reenviar: '+error.message); return; }
+        alert('Enviamos um novo e-mail de confirma��o.');
+      } catch(e){ console.error(e); alert('Falha ao reenviar.'); }
+      finally { resendTopBtn.disabled = false; }
+    });
+  }
+  if(resendBtn){
+    resendBtn.addEventListener('click', async ()=>{
+      try{
+        resendBtn.disabled = true;
+        const u = await getCurrentUser();
+        const email = u && u.email;
+        if(!email){ alert('Faça login novamente.'); return; }
+        if(!supa || !supa.auth || typeof supa.auth.resend !== 'function'){
+          alert('Reenvio de confirmação indisponível no momento.'); return;
+        }
+        const { error } = await supa.auth.resend({ type:'signup', email });
+        if(error){ alert('Erro ao reenviar: '+error.message); return; }
+        alert('Enviamos um novo e-mail de confirmação.');
+      } catch(e){ console.error(e); alert('Falha ao reenviar.'); }
+      finally { resendBtn.disabled = false; }
+    });
+  }
+}
+
 // Handlers mínimos de autenticação no app principal
 async function handleSignOut(){
   try {
@@ -634,6 +726,7 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
 
 
 

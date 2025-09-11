@@ -53,6 +53,10 @@
   </header>
 
   <main id="view">
+    <div id="verifyBanner" class="warn-banner hidden-soft">
+      <strong>E-mail não verificado:</strong> confirme seu e-mail para publicar sua página.
+      <button id="resendConfirmTop" class="btn small" style="margin-left:8px">Reenviar confirmação</button>
+    </div>
     <!-- CRIAR (novo fluxo em etapas) -->
     <section id="view-criar" class="screen">
       <div class="editor">
@@ -322,6 +326,16 @@
         </label>
         <label>E-mail
           <input id="meuEmail" type="email" placeholder="seuemail@exemplo.com" disabled>
+        </label>
+        <div class="btn-row" id="emailConfirmWrap" style="margin-top:6px">
+          <small id="emailStatus" class="muted"></small>
+          <button id="resendConfirm" type="button" class="btn small">Reenviar confirmação</button>
+        </div>
+        <label>WhatsApp
+          <input id="meuWhatsapp" type="text" placeholder="(xx) xxxxx-xxxx">
+        </label>
+        <label>Endereço completo
+          <input id="meuEndereco" type="text" placeholder="Rua, nº, bairro, cidade, UF, CEP">
         </label>
         <label>Foto / Logo
           <input type="file" accept="image/*">

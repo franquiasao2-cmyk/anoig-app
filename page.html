@@ -89,6 +89,62 @@
       }
     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async function(){
+      const slug = location.hash.replace('#','').trim();
+      const warn = document.getElementById('warn');
+      if(!slug) return;
+      const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
+      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
+      if(typeof supabase === 'undefined') return;
+      try{
+        const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        const { data: pg, error: e1 } = await supa
+          .from('pages')
+          .select('id, title, subtitle, header_preset, header_color, is_published')
+          .eq('slug', slug)
+          .eq('is_published', true)
+          .single();
+        if(e1 || !pg) return;
+        const { data: btns } = await supa
+          .from('buttons')
+          .select('label, url, order_index, color, text_color, size, radius, shadow')
+          .eq('page_id', pg.id)
+          .order('order_index', { ascending:true });
+
+        // Atualiza DOM
+        document.getElementById('pubTitle').textContent = pg.title || 'Título';
+        document.getElementById('pubSubtitle').textContent = pg.subtitle || '';
+        if(warn){ warn.style.display='none'; warn.textContent=''; }
+        const header = document.getElementById('pubHeader');
+        const preset = pg.header_preset || 'pattern1';
+        if(preset === 'solid'){
+          header.style.background = pg.header_color || '#1f2937';
+        } else if(preset === 'gradient'){
+          let [g1,g2] = (pg.header_color || '').split('|');
+          header.style.background = `linear-gradient(135deg, ${g1||'#6366f1'}, ${g2||'#ec4899'})`;
+        } else {
+          if(preset === 'pattern2') header.style.background = 'linear-gradient(135deg,#283552,#1b2740)';
+          else if(preset === 'pattern3') header.style.background = 'linear-gradient(135deg,#fef3c7,#fca5a5)';
+          else header.style.background = 'linear-gradient(135deg,#1f2937,#111827)';
+        }
+
+        const wrap = document.getElementById('pubButtons');
+        wrap.innerHTML='';
+        (btns||[]).forEach(b=>{
+          const a=document.createElement('a');
+          a.className='card-btn'; a.target='_blank'; a.rel='noopener'; a.href=b.url||'#';
+          a.style.borderRadius=(typeof b.radius==='number'?b.radius:14)+'px';
+          a.setAttribute('data-size', b.size||'md');
+          a.setAttribute('data-shadow', b.shadow?'true':'false');
+          a.style.background=b.color||'#2b7a78';
+          a.innerHTML=`<div class="card-inner"><div class="card-icon" style="background:${b.color||'#2b7a78'}"></div><div class="card-label" style="color:${b.text_color||'#ffffff'}">${b.label||'Botão'}</div></div>`;
+          wrap.appendChild(a);
+        });
+      }catch(e){ console.error(e); }
+    })();
+  </script>
 </body>
 </html>
 
