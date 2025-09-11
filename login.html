@@ -1,97 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0;url=index.html">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Entrar — Anoig</title>
-  <link rel="stylesheet" href="style.css?v=3">
-  <style>
-    body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px; background:#25393D; }
-    .auth-card { width: 100%; max-width: 360px; background: #3A6B75; color:#ffffff; border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px; }
-    .brand { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-    .brand .logo { width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700; }
-    .muted { color: #e5e7eb; font-size: 0.9em; }
-    .sep { height:1px; background:var(--stroke); margin:12px 0; }
-    .link { color: var(--primary); cursor:pointer; background:none; border:0; padding:0; font: inherit; }
-    .hidden { display:none; }
-    input { background:#ffffff; color:#111827; }
-    .btn.primary { background:#2E5560; border:none; color:#ffffff; }
-    .btn.primary:hover { background:#24434A; }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
-    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
-    const supa = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
-    async function doLogin(e){
-      e.preventDefault();
-      const email = document.getElementById('inEmail').value.trim();
-      const pass  = document.getElementById('inPass').value;
-      const out = document.getElementById('msg'); out.textContent='';
-      if(!supa){ out.textContent='SDK indisponível'; return; }
-      const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
-      if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
-      location.href = 'index.html';
-    }
-    async function doReset(e){
-      e.preventDefault();
-      const email = document.getElementById('fpEmail').value.trim();
-      const out = document.getElementById('msg'); out.textContent='';
-      if(!supa){ out.textContent='SDK indisponível'; return; }
-      const { error } = await supa.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset.html' });
-      if(error){ out.textContent = error.message || 'Não foi possível enviar e-mail.'; return; }
-      out.textContent = 'Enviamos um e-mail com instruções para redefinir a senha.';
-    }
-    function goSignup(){ location.href = 'signup.html'; }
-    function toggleForgot(){ document.getElementById('forgotWrap').classList.toggle('hidden'); }
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      try{
-        // Se já estiver autenticado, vai direto ao painel
-        if(supa){
-          const { data: { user } } = await supa.auth.getUser();
-          if(user){ location.href = 'index.html?authed=1'; return; }
-        }
-      }catch(_){ }
-      document.getElementById('loginForm').addEventListener('submit', doLogin);
-      document.getElementById('forgotBtn').addEventListener('click', toggleForgot);
-      document.getElementById('sendReset').addEventListener('click', doReset);
-      document.getElementById('goSignup').addEventListener('click', goSignup);
-    });
-  </script>
-  <link rel="icon" href="data:,">
-  <style>:root { color-scheme: light dark; }</style>
-  </head>
+  <title>Redirecionando…</title>
+  <script>window.location.replace("index.html");</script>
+</head>
 <body>
-  <div class="auth-card">
-    <div class="brand">
-      <div class="logo">A</div>
-      <div>
-        <strong>Anoig</strong><br>
-        <span class="muted">Acesse sua conta</span>
-      </div>
-    </div>
-    <form id="loginForm" class="form">
-      <label>E-mail
-        <input id="inEmail" type="email" placeholder="seuemail@exemplo.com" required>
-      </label>
-      <label>Senha
-        <input id="inPass" type="password" placeholder="••••••••" required>
-      </label>
-      <div class="btn-row" style="margin-top:8px">
-        <button class="btn primary" type="submit">Entrar</button>
-        <button class="btn" type="button" id="goSignup">Criar conta</button>
-        <button class="btn ghost" type="button" id="forgotBtn">Esqueci a senha</button>
-      </div>
-    </form>
-    <div id="forgotWrap" class="hidden" style="margin-top:10px">
-      <div class="sep"></div>
-      <div class="muted" style="margin-bottom:6px">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
-      <input id="fpEmail" type="email" placeholder="seuemail@exemplo.com">
-      <div class="btn-row" style="margin-top:6px">
-        <button class="btn" type="button" id="sendReset">Enviar link</button>
-      </div>
-    </div>
-    <div id="msg" class="muted" style="margin-top:10px"></div>
-  </div>
-  </body>
+  <p>Redirecionando para <a href="index.html">index.html</a>…</p>
+</body>
 </html>
+

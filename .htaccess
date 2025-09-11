@@ -13,4 +13,6 @@ AddType 'text/html; charset=UTF-8' .html .htm
 AddType 'text/css; charset=UTF-8' .css
 AddType 'application/javascript; charset=UTF-8' .js
 
-# (Removido o redirecionamento de /index.html para evitar loop com URL limpa)
+# Redireciona login.html para index.html (mantém compatibilidade com links antigos)
+RewriteCond %{THE_REQUEST} \s/login\.html [NC]
+RewriteRule ^login\.html$ /index.html [R=301,L]

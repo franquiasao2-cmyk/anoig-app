@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Criar conta — Anoig</title>
+  <title>Criar conta â€” Anoig</title>
   <link rel="stylesheet" href="style.css?v=3">
   <style>
     body { display:flex; align-items:flex-start; justify-content:center; min-height:100vh; padding:16px; }
@@ -27,8 +27,8 @@
       const pass     = document.getElementById('sgPass').value;
       const pass2    = document.getElementById('sgPass2').value;
       const msg = document.getElementById('msg'); msg.textContent='';
-      if(pass !== pass2){ msg.textContent='As senhas não conferem.'; return; }
-      if(!supa){ msg.textContent='SDK indisponível'; return; }
+      if(pass !== pass2){ msg.textContent='As senhas nÃ£o conferem.'; return; }
+      if(!supa){ msg.textContent='SDK indisponÃ­vel'; return; }
       const { data, error } = await supa.auth.signUp({
         email,
         password: pass,
@@ -69,15 +69,15 @@
       <label>WhatsApp
         <input id="sgWhatsapp" type="text" placeholder="(xx) xxxxx-xxxx" required>
       </label>
-      <label>Endereço completo
-        <input id="sgAddress" type="text" placeholder="Rua, nº, bairro, cidade, UF, CEP" required>
+      <label>EndereÃ§o completo
+        <input id="sgAddress" type="text" placeholder="Rua, nÂº, bairro, cidade, UF, CEP" required>
       </label>
       <div class="grid-2">
         <label>Senha
-          <input id="sgPass" type="password" placeholder="••••••••" required>
+          <input id="sgPass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
         </label>
         <label>Confirmar senha
-          <input id="sgPass2" type="password" placeholder="••••••••" required>
+          <input id="sgPass2" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
         </label>
       </div>
       <div class="btn-row" style="margin-top:8px">
@@ -89,3 +89,4 @@
   </div>
 </body>
 </html>
+

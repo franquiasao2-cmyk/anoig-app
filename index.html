@@ -1,312 +1,96 @@
 ﻿<!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Anoig App — Painel</title>
+  <title>Entrar — Anoig</title>
   <link rel="stylesheet" href="style.css?v=3">
   <style>
-    .step-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-    .step-badge { background:var(--primary, #2b7a78); color:#fff; border-radius:999px; font-weight:700; padding:2px 10px; font-size:12px; }
-    .hidden-soft { display:none; }
-    .font-sample { font-size:12px; color:var(--muted, #6b7280); }
-    .thin-note { font-size:12px; color:var(--muted, #6b7280); margin-top:4px; display:block; }
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px; background:#25393D; }
+    .auth-card { width: 100%; max-width: 360px; background: #3A6B75; color:#ffffff; border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px; }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .brand .logo { width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700; }
+    .muted { color: #e5e7eb; font-size: 0.9em; }
+    .sep { height:1px; background:var(--stroke); margin:12px 0; }
+    .link { color: var(--primary); cursor:pointer; background:none; border:0; padding:0; font: inherit; }
+    .hidden { display:none; }
+    input { background:#ffffff; color:#111827; }
+    .btn.primary { background:#2E5560; border:none; color:#ffffff; }
+    .btn.primary:hover { background:#24434A; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
+    const supa = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+    async function doLogin(e){
+      e.preventDefault();
+      const email = document.getElementById('inEmail').value.trim();
+      const pass  = document.getElementById('inPass').value;
+      const out = document.getElementById('msg'); out.textContent='';
+      if(!supa){ out.textContent='SDK indisponível'; return; }
+      const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
+      if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
+      location.href = 'dashboard.html';
+    }
+    async function doReset(e){
+      e.preventDefault();
+      const email = document.getElementById('fpEmail').value.trim();
+      const out = document.getElementById('msg'); out.textContent='';
+      if(!supa){ out.textContent='SDK indisponível'; return; }
+      const { error } = await supa.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset.html' });
+      if(error){ out.textContent = error.message || 'Não foi possível enviar e-mail.'; return; }
+      out.textContent = 'Enviamos um e-mail com instruções para redefinir a senha.';
+    }
+    function goSignup(){ location.href = 'signup.html'; }
+    function toggleForgot(){ document.getElementById('forgotWrap').classList.toggle('hidden'); }
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      try{
+        if(supa){
+          const { data: { user } } = await supa.auth.getUser();
+          if(user){ location.href = 'dashboard.html?authed=1'; return; }
+        }
+      }catch(_){ }
+      document.getElementById('loginForm').addEventListener('submit', doLogin);
+      document.getElementById('forgotBtn').addEventListener('click', toggleForgot);
+      document.getElementById('sendReset').addEventListener('click', doReset);
+      document.getElementById('goSignup').addEventListener('click', goSignup);
+    });
+  </script>
   <link rel="icon" href="data:,">
-</head>
+  <style>:root { color-scheme: light dark; }</style>
+  </head>
 <body>
-  <header class="topbar">
+  <div class="auth-card">
     <div class="brand">
       <div class="logo">A</div>
-      <div class="titles">
-        <strong>Anoig App</strong>
-        <span>Painel do Assinante</span>
+      <div>
+        <strong>Anoig</strong><br>
+        <span class="muted">Acesse sua conta</span>
       </div>
     </div>
-    <!-- Login removido do cabeçalho: acesso via login.html -->
-    <nav class="tabs">
-      <a href="#criar" class="tab">Criar</a>
-      <a href="#projetos" class="tab">Meus Projetos</a>
-      <a href="#modelos" class="tab">Modelos Prontos</a>
-      <a href="#dados" class="tab">Meus Dados</a>
-      <a href="#pagamentos" class="tab">Meus Pagamentos</a>
-    </nav>
-  </header>
-
-  <main id="view">
-    <div id="verifyBanner" class="warn-banner hidden-soft">
-      <strong>E-mail não verificado:</strong> confirme seu e-mail para publicar sua página.
-      <button id="resendConfirmTop" class="btn small" style="margin-left:8px">Reenviar confirmação</button>
+    <form id="loginForm" class="form">
+      <label>E-mail
+        <input id="inEmail" type="email" placeholder="seuemail@exemplo.com" required>
+      </label>
+      <label>Senha
+        <input id="inPass" type="password" placeholder="••••••••" required>
+      </label>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn primary" type="submit">Entrar</button>
+        <button class="btn" type="button" id="goSignup">Criar conta</button>
+        <button class="btn ghost" type="button" id="forgotBtn">Esqueci a senha</button>
+      </div>
+    </form>
+    <div id="forgotWrap" class="hidden" style="margin-top:10px">
+      <div class="sep"></div>
+      <div class="muted" style="margin-bottom:6px">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
+      <input id="fpEmail" type="email" placeholder="seuemail@exemplo.com">
+      <div class="btn-row" style="margin-top:6px">
+        <button class="btn" type="button" id="sendReset">Enviar link</button>
+      </div>
     </div>
-
-    <!-- CRIAR -->
-    <section id="view-criar" class="screen">
-      <div class="editor">
-        <aside class="panel">
-          <!-- Etapa 1: Cabeçalho -->
-          <div class="panel-group">
-            <div class="step-header">
-              <span class="step-badge">1</span><h3 style="margin:0">Cabeçalho da página</h3>
-            </div>
-            <label>Título
-              <input id="pageTitle" type="text" placeholder="Nome do cliente">
-            </label>
-            <div class="grid-2">
-              <label>Cor do texto (título)
-                <input id="titleColor" type="color" value="#111827">
-              </label>
-              <label>Fonte
-                <select id="titleFont">
-                  <option value="Inter, Arial, sans-serif" selected>Inter</option>
-                  <option value="Poppins, Arial, sans-serif">Poppins</option>
-                  <option value="Montserrat, Arial, sans-serif">Montserrat</option>
-                  <option value="Roboto, Arial, sans-serif">Roboto</option>
-                </select>
-                <span class="font-sample" id="titleFontSample">Exemplo de fonte</span>
-              </label>
-            </div>
-            <label>Subtítulo (opcional)
-              <input id="pageSubtitle" type="text" placeholder="Profissão / slogan">
-            </label>
-            <div class="grid-2">
-              <label>Cor do texto (subtítulo)
-                <input id="subtitleColor" type="color" value="#4b5563">
-              </label>
-              <div></div>
-            </div>
-            <div class="logo-row">
-              <div>
-                <label>Logo/Foto
-                  <input id="logoInput" type="file" accept="image/*">
-                </label>
-                <span class="thin-note">Aparecerá ao lado do texto.</span>
-              </div>
-              <div class="logo-preview" id="logoPreview">LOGO</div>
-            </div>
-            <label>Tipo de fundo</label>
-            <div class="grid-2">
-              <select id="headerBgType">
-                <option value="solid" selected>Cor sólida</option>
-                <option value="gradient">Cor gradiente</option>
-                <option value="preset">Modelo pronto</option>
-              </select>
-              <div></div>
-            </div>
-            <div id="bgSolidRow">
-              <label>Cor do fundo
-                <input id="headerColor" type="color" value="#e5e7eb">
-              </label>
-            </div>
-            <div id="bgGradientRow" class="gradient-row hidden-soft">
-              <label>Gradiente — cor 1
-                <input id="gradColor1" type="color" value="#6366f1">
-              </label>
-              <label>Gradiente — cor 2
-                <input id="gradColor2" type="color" value="#ec4899">
-              </label>
-            </div>
-            <div id="bgPresetRow" class="hidden-soft">
-              <div id="headerPresetsGrid" class="models-grid small">
-                <div class="model-card" data-hpreset="pattern1"><div class="thumb"></div><strong>Padrão 1</strong></div>
-                <div class="model-card" data-hpreset="pattern2"><div class="thumb"></div><strong>Padrão 2</strong></div>
-                <div class="model-card" data-hpreset="pattern3"><div class="thumb"></div><strong>Padrão 3</strong></div>
-              </div>
-            </div>
-            <div class="next-row">
-              <button class="btn primary" id="goButtons">Próximo passo: Botões</button>
-            </div>
-          </div>
-
-          <!-- Etapa 2: Botões -->
-          <div class="panel-group">
-            <div class="step-header">
-              <span class="step-badge">2</span><h3 style="margin:0">Botões da página</h3>
-            </div>
-            <ul id="buttonsList" class="list sortable"></ul>
-            <h4>Editar botão selecionado</h4>
-            <label>Texto (rótulo do botão)
-              <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
-            </label>
-            <label>Link
-              <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
-            </label>
-            <div class="grid-2">
-              <label>Cor do fundo
-                <input id="btnColor" type="color" value="#2b7a78">
-              </label>
-              <label>Cor do texto
-                <input id="btnTextColor" type="color" value="#ffffff">
-              </label>
-            </div>
-            <div class="grid-2">
-              <label>Tamanho
-                <select id="btnSize">
-                  <option value="md" selected>Médio</option>
-                  <option value="lg">Grande</option>
-                  <option value="sm">Pequeno</option>
-                </select>
-              </label>
-              <label>Raio (arredondamento)
-                <input id="btnRadius" type="range" min="6" max="24" value="14">
-              </label>
-            </div>
-            <label class="checkbox" style="margin-top:6px">
-              <input id="btnShadow" type="checkbox" checked> Sombra
-            </label>
-            <div class="btn-row" style="margin-top:8px">
-              <button id="addBtn" class="btn primary">+ Adicionar botão</button>
-              <button id="applyBtn" class="btn">Aplicar</button>
-              <button id="deleteBtn" class="btn danger">Excluir</button>
-            </div>
-            <div id="useModelWrap" style="margin-top:8px">
-              <div class="models-grid" id="btnModelsGrid"></div>
-              <span class="thin-note">Clique no + do card para inserir o modelo imediatamente.</span>
-            </div>
-          </div>
-
-          <!-- Etapa 3: Identidade / Publicação -->
-          <div class="panel-group">
-            <div class="step-header">
-              <span class="step-badge">3</span><h3 style="margin:0">Identidade & Publicação</h3>
-            </div>
-            <label>Escolha o link
-              <input id="pageSlug" type="text" placeholder="ex.: lucyana">
-            </label>
-            <small class="muted">Seu link ficará: <code>app.anoig.com/page.html#seu-link</code></small>
-            <div class="btn-row sticky" style="margin-top:8px">
-              <button id="saveDraft" class="btn" title="Salva no banco (precisa estar logado)">Salvar</button>
-              <button id="publish" class="btn primary" title="Publica no banco (precisa estar logado)">Publicar</button>
-              <button id="copyLink" class="btn ghost">Copiar link</button>
-            </div>
-            <small id="publishHint" class="muted"></small>
-          </div>
-        </aside>
-
-        <section class="preview">
-          <div class="phone">
-            <div id="phoneHeader" class="phone-header">
-              <div class="avatar" id="avatarBox">+</div>
-              <div class="texts">
-                <div id="pvTitle" class="pv-title">Título da Página</div>
-                <div id="pvSubtitle" class="pv-subtitle">Subtítulo opcional</div>
-              </div>
-            </div>
-            <div id="pvButtons" class="phone-body"></div>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <!-- PROJETOS -->
-    <section id="view-projetos" class="screen hidden">
-      <h2>Meus Projetos</h2>
-      <div class="filters">
-        <label>Status
-          <select id="fltStatus">
-            <option value="all">Todos</option>
-            <option value="published">Publicados</option>
-            <option value="draft">Rascunhos</option>
-          </select>
-        </label>
-        <label>Mês
-          <select id="fltMonth">
-            <option value="all">Todos os meses</option>
-          </select>
-        </label>
-        <button id="btnReloadProjects" class="btn">Atualizar</button>
-      </div>
-      <div id="projectsList" class="projects-grid"></div>
-      <div id="projectsEmpty" class="muted" style="display:none;margin-top:8px">Nenhum projeto encontrado.</div>
-      <small class="muted">Dica: clique em <strong>Editar</strong> para carregar o projeto na aba <em>Criar</em>.</small>
-    </section>
-
-    <!-- MODELOS -->
-    <section id="view-modelos" class="screen hidden">
-      <h2>Modelos Prontos</h2>
-      <div class="models-grid">
-        <div class="model-card" data-model="essencial"><div class="thumb"></div><strong>Essencial</strong><button class="btn small">Aplicar</button></div>
-        <div class="model-card" data-model="promo"><div class="thumb"></div><strong>Promo</strong><button class="btn small">Aplicar</button></div>
-        <div class="model-card" data-model="servicos"><div class="thumb"></div><strong>Serviços</strong><button class="btn small">Aplicar</button></div>
-        <div class="model-card" data-model="restaurante"><div class="thumb"></div><strong>Restaurante</strong><button class="btn small">Aplicar</button></div>
-      </div>
-    </section>
-
-    <!-- DADOS -->
-    <section id="view-dados" class="screen hidden">
-      <h2>Meus Dados</h2>
-      <form class="form">
-        <label>Nome completo
-          <input id="meuNome" type="text" placeholder="Seu nome">
-        </label>
-        <label>E-mail
-          <input id="meuEmail" type="email" placeholder="seuemail@exemplo.com" disabled>
-        </label>
-        <div class="btn-row" id="emailConfirmWrap" style="margin-top:6px">
-          <small id="emailStatus" class="muted"></small>
-          <button id="resendConfirm" type="button" class="btn small">Reenviar confirmação</button>
-        </div>
-        <label>WhatsApp
-          <input id="meuWhatsapp" type="text" placeholder="(xx) xxxxx-xxxx">
-        </label>
-        <label>Endereço completo
-          <input id="meuEndereco" type="text" placeholder="Rua, nº, bairro, cidade, UF, CEP">
-        </label>
-        <label>Foto / Logo
-          <input type="file" accept="image/*">
-        </label>
-        <label>Status da assinatura
-          <input id="statusInput" type="text" value="ativa" disabled>
-        </label>
-        <label>Tema do painel
-          <select id="themeSelect">
-            <option value="light" selected>Claro</option>
-            <option value="dark">Escuro</option>
-          </select>
-        </label>
-        <div class="btn-row">
-          <button type="button" id="savePrefs" class="btn">Salvar preferências</button>
-        </div>
-        <div class="btn-row"><button type="button" id="btnSignOut" class="btn danger">Sair</button></div>
-      </form>
-    </section>
-
-    <!-- PAGAMENTOS -->
-    <section id="view-pagamentos" class="screen hidden">
-      <h2>Meus Pagamentos</h2>
-      <div class="plans">
-        <div class="plan">
-          <h3>Recorrente</h3>
-          <div class="price">R$200<span>/mês</span></div>
-          <ul>
-            <li>Pagamento automático</li>
-            <li>Mais barato</li>
-            <li>Sem preocupação de renovar</li>
-          </ul>
-          <button class="btn primary">Assinar recorrente</button>
-        </div>
-        <div class="plan">
-          <h3>Mensal (flex)</h3>
-          <div class="price">R$300<span>/mês</span></div>
-          <ul>
-            <li>Parcele em 6x de R$50</li>
-            <li>Teste por 30 dias</li>
-            <li>Depois migre p/ recorrente</li>
-          </ul>
-          <button class="btn">Assinar mensal</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="foot">
-    <small>© Anoig — v1.1 (Fluxo de criação refeito)</small>
-  </footer>
-
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Templates SVG -->
-  <script src="svg-templates.js?v=3"></script>
-  <!-- App -->
-  <script src="app.js?v=13"></script>
-</body>
+    <div id="msg" class="muted" style="margin-top:10px"></div>
+  </div>
+  </body>
 </html>
