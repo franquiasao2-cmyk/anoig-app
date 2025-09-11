@@ -636,11 +636,12 @@ document.addEventListener('DOMContentLoaded', async ()=>{
         e.preventDefault();
         const h = a.getAttribute('href') || '#criar';
         showLoading();
+        const apply = ()=>{ setScreenFromHash(); setTimeout(hideLoading, 200); };
         if(location.hash !== h) {
           location.hash = h;
+          setTimeout(apply, 10);
         } else {
-          setScreenFromHash();
-          setTimeout(hideLoading, 200);
+          apply();
         }
       });
     });
