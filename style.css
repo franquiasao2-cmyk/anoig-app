@@ -175,6 +175,17 @@ input[type=color] { padding: 0; height: 36px; }
 .loading-card img { width: 48px; height: 48px; object-fit: contain; }
 .loading-text { font-weight: 700; letter-spacing: .3px; }
 
+/* MEUS DADOS */
+.profile-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.avatar-user { width: 80px; height: 80px; border-radius: 50%; background:#e5e7eb; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:700; color:#6b7280; }
+.avatar-user img { width:100%; height:100%; object-fit: cover; }
+.status-badge { display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; font-size:.85em; }
+.status-badge.ok { background:#16a34a; color:#fff; }
+.status-badge.off { background:#dc2626; color:#fff; }
+.plan-line { margin-top:6px; display:flex; align-items:center; gap:8px; }
+.btn.upgrade { background:#14532d; color:#fff; border:none; }
+.btn.upgrade:hover { background:#0f3f23; }
+
 /* RESPONSIVO */
 @media (max-width: 768px) {
   main { padding: 12px 8px; }

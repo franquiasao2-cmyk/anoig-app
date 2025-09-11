@@ -23,6 +23,10 @@
         <strong>Anoig App</strong>
         <span>Painel do Assinante</span>
       </div>
+      <div id="brandUserWrap" style="display:flex; align-items:center; gap:8px; margin-left:12px;">
+        <div id="brandUserAvatar" class="avatar-user" style="width:32px;height:32px;"><span style="font-size:.9em">+</span></div>
+        <span id="brandUserName" class="muted"></span>
+      </div>
     </div>
     <!-- Login removido do cabeçalho: acesso via login.html -->
     <nav class="tabs">
@@ -236,6 +240,13 @@
     <section id="view-dados" class="screen hidden">
       <h2>Meus Dados</h2>
       <form class="form">
+        <div class="profile-row">
+          <div id="userAvatarPreview" class="avatar-user"><span>+</span></div>
+          <div>
+            <input id="userAvatarFile" type="file" accept="image/*">
+            <small class="muted">Atualize sua foto de perfil</small>
+          </div>
+        </div>
         <label>Nome completo
           <input id="meuNome" type="text" placeholder="Seu nome">
         </label>
@@ -246,17 +257,22 @@
           <small id="emailStatus" class="muted"></small>
           <button id="resendConfirm" type="button" class="btn small">Reenviar confirmação</button>
         </div>
+        <div>
+          <label>Status da assinatura</label>
+          <div>
+            <span id="assStatusBadge" class="status-badge off">Inativo</span>
+          </div>
+          <div id="assPlanLine" class="plan-line hidden-soft">
+            <span class="muted">Plano atual:</span>
+            <strong id="assPlanText">-</strong>
+            <button id="btnUpgradeRecorrente" type="button" class="btn upgrade hidden-soft">Fazer upgrade para recorrência</button>
+          </div>
+        </div>
         <label>WhatsApp
           <input id="meuWhatsapp" type="text" placeholder="(xx) xxxxx-xxxx">
         </label>
         <label>Endereço completo
           <input id="meuEndereco" type="text" placeholder="Rua, nº, bairro, cidade, UF, CEP">
-        </label>
-        <label>Foto / Logo
-          <input type="file" accept="image/*">
-        </label>
-        <label>Status da assinatura
-          <input id="statusInput" type="text" value="ativa" disabled>
         </label>
         <label>Tema do painel
           <select id="themeSelect">

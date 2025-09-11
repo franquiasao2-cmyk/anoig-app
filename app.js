@@ -137,6 +137,19 @@ function setAuthUI(user){
   const meuNome=qs('#meuNome'); if(meuNome) meuNome.value = meta.full_name || '';
   const meuWhats=qs('#meuWhatsapp'); if(meuWhats) meuWhats.value = meta.whatsapp || '';
   const meuEnd=qs('#meuEndereco'); if(meuEnd) meuEnd.value = meta.address || '';
+  // Avatar e nome no header
+  const avatarUrl = meta.avatar_url || '';
+  const avPrev = qs('#userAvatarPreview'); if(avPrev){ avPrev.innerHTML = avatarUrl?('<img src="'+escapeHtml(avatarUrl)+'" alt="avatar">'):'<span>+</span>'; }
+  const brandAv = qs('#brandUserAvatar'); if(brandAv){ brandAv.innerHTML = avatarUrl?('<img src="'+escapeHtml(avatarUrl)+'" alt="avatar">'):'<span style="font-size:.9em">+</span>'; }
+  const first = (meta.full_name||'').trim().split(/\s+/)[0]||''; const brandNm = qs('#brandUserName'); if(brandNm) brandNm.textContent = first;
+  // Status + plano
+  const status = (meta.status || assinaturaStatus || 'ativa');
+  const plan = (meta.plan || 'mensal');
+  const badge = qs('#assStatusBadge'); if(badge){ badge.textContent = status==='ativa'?'Ativo':'Inativo'; badge.classList.toggle('ok', status==='ativa'); badge.classList.toggle('off', status!=='ativa'); }
+  const planLine = qs('#assPlanLine'); const planText = qs('#assPlanText'); const upBtn = qs('#btnUpgradeRecorrente');
+  if(planLine){ planLine.classList.toggle('hidden-soft', status!=='ativa'); }
+  if(planText){ planText.textContent = plan==='recorrente'?'Recorrente':'Mensal'; }
+  if(upBtn){ upBtn.classList.toggle('hidden-soft', !(status==='ativa' && plan!=='recorrente')); }
 }
 
 /* ---------- Header (Etapa 1) ---------- */
@@ -676,6 +689,8 @@ function bindAccountPrefs(){
   const themeSel = qs('#themeSelect');
   const saveBtn = qs('#savePrefs');
   const resendBtn = qs('#resendConfirm');
+  const avatarFile = qs('#userAvatarFile');
+  const upBtn = qs('#btnUpgradeRecorrente');
   if(themeSel){ themeSel.addEventListener('change', ()=> applyTheme(themeSel.value)); }
   if(saveBtn){
     saveBtn.addEventListener('click', async ()=>{
@@ -684,12 +699,43 @@ function bindAccountPrefs(){
         const full_name = (qs('#meuNome')?.value||'').trim();
         const whatsapp  = (qs('#meuWhatsapp')?.value||'').trim();
         const address   = (qs('#meuEndereco')?.value||'').trim();
+        // preserva status/plan/avatar existentes
+        const user=await getCurrentUser();
+        const meta=(user&&user.user_metadata)||{};
+        const avatar_url = (qs('#userAvatarPreview')?.querySelector('img')?.getAttribute('src')) || meta.avatar_url || '';
+        const status = meta.status || assinaturaStatus || 'ativa';
+        const plan = meta.plan || 'mensal';
         if(supa){
-          const { error } = await supa.auth.updateUser({ data: { full_name, whatsapp, address } });
+          const { error } = await supa.auth.updateUser({ data: { full_name, whatsapp, address, avatar_url, status, plan } });
           if(error){ alert('Erro ao salvar dados: '+error.message); return; }
         }
         alert('Preferências salvas.');
       }catch(e){ console.error(e); alert('Falha ao salvar preferências.'); }
+    });
+  }
+  if(avatarFile){
+    avatarFile.addEventListener('change', ()=>{
+      const f=avatarFile.files&&avatarFile.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=async()=>{
+        const dataUrl=String(r.result||'');
+        const prev=qs('#userAvatarPreview'); if(prev){ prev.innerHTML='<img src="'+escapeHtml(dataUrl)+'" alt="avatar">'; }
+        const brandAv=qs('#brandUserAvatar'); if(brandAv){ brandAv.innerHTML='<img src="'+escapeHtml(dataUrl)+'" alt="avatar">'; }
+        if(supa){ const { error } = await supa.auth.updateUser({ data: { avatar_url: dataUrl } }); if(error){ alert('Erro ao atualizar foto: '+error.message); } }
+      };
+      r.readAsDataURL(f);
+    });
+  }
+  if(upBtn){
+    upBtn.addEventListener('click', async ()=>{
+      try{
+        if(!supa){ alert('Indisponível no momento.'); return; }
+        const { error } = await supa.auth.updateUser({ data: { plan: 'recorrente', status: 'ativa' } });
+        if(error){ alert('Erro ao atualizar plano: '+error.message); return; }
+        const planText=qs('#assPlanText'); if(planText) planText.textContent='Recorrente';
+        upBtn.classList.add('hidden-soft');
+        alert('Plano atualizado para recorrente!');
+      }catch(e){ console.error(e); alert('Falha ao atualizar plano.'); }
     });
   }
   const resendTopBtn = qs('#resendConfirmTop');
