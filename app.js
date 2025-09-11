@@ -613,6 +613,13 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   initTheme();
   setScreenFromHash();
 
+  // Limpa o parâmetro ?authed=1 da URL após autenticação
+  try {
+    if(location.search && /(?:^|[?&])authed=1(?:&|$)/.test(location.search)){
+      history.replaceState(null, '', location.pathname + (location.hash||''));
+    }
+  } catch(_) {}
+
   try { bindHeaderUI(); refreshHeader(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindHeaderUI'); }
   try { bindButtonsUI(); refreshButtonsUI(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindButtonsUI'); }
   
