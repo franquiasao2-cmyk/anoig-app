@@ -6,3 +6,9 @@ RewriteRule ^$ /login.html [R=301,L]
 
 # Também serve login.html como página inicial (caso mod_rewrite não esteja ativo)
 DirectoryIndex login.html index.html
+
+# Força charset UTF-8 para HTML, CSS e JS (evita acentos quebrados)
+AddDefaultCharset UTF-8
+AddType 'text/html; charset=UTF-8' .html .htm
+AddType 'text/css; charset=UTF-8' .css
+AddType 'application/javascript; charset=UTF-8' .js
