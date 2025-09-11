@@ -629,6 +629,23 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   initTheme();
   setScreenFromHash();
 
+  // Garante navegação por abas com feedback visual de carregamento
+  try {
+    qsa('.tabs a.tab').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const h = a.getAttribute('href') || '#criar';
+        showLoading();
+        if(location.hash !== h) {
+          location.hash = h;
+        } else {
+          setScreenFromHash();
+          setTimeout(hideLoading, 200);
+        }
+      });
+    });
+  } catch(_) {}
+
   // Limpa o parâmetro ?authed=1 da URL após autenticação
   try {
     if(location.search && /(?:^|[?&])authed=1(?:&|$)/.test(location.search)){
@@ -661,7 +678,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
 });
 
-window.addEventListener('hashchange', setScreenFromHash);
+window.addEventListener('hashchange', ()=>{ try{ showLoading(); }catch(_){ } setScreenFromHash(); setTimeout(()=>{ try{ hideLoading(); }catch(_){ } }, 200); });
 
 // Garante regras para publicar (login, assinatura, e-mail verificado)
 function enforcePublishGuard(user){
