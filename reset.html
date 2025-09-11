@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Redefinir senha — Anoig</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .auth-card { width: 360px; background: var(--surface); border:1px solid var(--stroke); border-radius:12px; padding:16px; }
+    .muted { color: var(--muted); font-size: 0.9em; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
+    const supa = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+    async function init(){
+      const msg = document.getElementById('msg');
+      if(!supa){ msg.textContent='SDK indisponível'; return; }
+      try { await supa.auth.exchangeCodeForSession(window.location.href); } catch(_) {}
+      const { data: { user } } = await supa.auth.getUser();
+      if(!user){ msg.textContent = 'Link inválido ou expirado. Solicite novamente.'; document.getElementById('form').style.display='none'; return; }
+    }
+    async function doUpdate(e){
+      e.preventDefault();
+      const p1 = document.getElementById('np1').value;
+      const p2 = document.getElementById('np2').value;
+      const msg = document.getElementById('msg'); msg.textContent='';
+      if(p1.length < 6){ msg.textContent='A senha deve ter ao menos 6 caracteres.'; return; }
+      if(p1 !== p2){ msg.textContent='As senhas não conferem.'; return; }
+      const { error } = await supa.auth.updateUser({ password: p1 });
+      if(error){ msg.textContent = error.message || 'Falha ao atualizar senha.'; return; }
+      msg.textContent = 'Senha atualizada. Você já pode entrar.';
+      setTimeout(()=> location.href='login.html', 800);
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('form').addEventListener('submit', doUpdate);
+      init();
+    });
+  </script>
+  <link rel="icon" href="data:,">
+  <style>:root { color-scheme: light dark; }</style>
+</head>
+<body>
+  <div class="auth-card">
+    <h2>Redefinir senha</h2>
+    <form id="form" class="form">
+      <label>Nova senha
+        <input id="np1" type="password" required>
+      </label>
+      <label>Confirmar nova senha
+        <input id="np2" type="password" required>
+      </label>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn primary" type="submit">Atualizar senha</button>
+      </div>
+    </form>
+    <div id="msg" class="muted" style="margin-top:10px"></div>
+  </div>
+</body>
+</html>
+

@@ -591,6 +591,12 @@ async function initProjectsView(forceRefresh){
 document.addEventListener('DOMContentLoaded', async ()=>{
   __devlog && __devlog('dom: carregado');
 
+  // Exigir autenticação: se não logado, enviar para a página de login
+  try {
+    const u0 = await getCurrentUser();
+    if(!u0){ location.href = 'login.html'; return; }
+  } catch(_) { /* se falhar, continua */ }
+
   if(!location.hash){ location.hash='#criar'; }
   initTheme();
   setScreenFromHash();
@@ -612,13 +618,22 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   try {
     const u=await getCurrentUser(); setAuthUI(u);
     const up=qs('#btnSignUp'), si=qs('#btnSignIn'), so=qs('#btnSignOut');
-    up && up.addEventListener('click', async()=>{ try{ await (await import('data:text/javascript,')).default }catch(_){ } ; handleSignUp();});
-    si && si.addEventListener('click', handleSignIn);
+    // Direciona para páginas dedicadas de auth
+    up && up.addEventListener('click', ()=>{ location.href='signup.html'; });
+    si && si.addEventListener('click', ()=>{ location.href='login.html'; });
     so && so.addEventListener('click', handleSignOut);
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
 });
 
 window.addEventListener('hashchange', setScreenFromHash);
+
+// Handlers mínimos de autenticação no app principal
+async function handleSignOut(){
+  try {
+    if(supa) await supa.auth.signOut();
+  } catch(_) {}
+  location.href='login.html';
+}
 
 
 
