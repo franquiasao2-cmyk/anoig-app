@@ -3,25 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Anoig App â€“ Painel</title>
+  <title>Anoig App — Painel</title>
   <link rel="stylesheet" href="style.css?v=3">
   <style>
-    /* Ajustes pontuais para a nova UI */
     .step-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
     .step-badge { background:var(--primary, #2b7a78); color:#fff; border-radius:999px; font-weight:700; padding:2px 10px; font-size:12px; }
-    .subtle { color:var(--muted, #6b7280); font-size:12px; }
-    .models-toggle { display:flex; gap:8px; margin:8px 0 4px; }
-    .models-toggle .btn { flex:1; }
-    .models-grid.small .model-card { position:relative; }
-    .model-plus { position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%; background:#22c55e; color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.15); }
-    .gradient-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .logo-row { display:flex; align-items:center; gap:12px; }
-    .logo-preview { width:48px; height:48px; border-radius:12px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-weight:700; color:#9ca3af; overflow:hidden; }
-    .next-row { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
     .hidden-soft { display:none; }
     .font-sample { font-size:12px; color:var(--muted, #6b7280); }
     .thin-note { font-size:12px; color:var(--muted, #6b7280); margin-top:4px; display:block; }
   </style>
+  <link rel="icon" href="data:,">
 </head>
 <body>
   <header class="topbar">
@@ -32,11 +23,7 @@
         <span>Painel do Assinante</span>
       </div>
     </div>
-
-
-    <!-- Login removido do cabeçalho: o acesso é feito via login.html -->
-
-
+    <!-- Login removido do cabeçalho: acesso via login.html -->
     <nav class="tabs">
       <a href="#criar" class="tab">Criar</a>
       <a href="#projetos" class="tab">Meus Projetos</a>
@@ -48,25 +35,24 @@
 
   <main id="view">
     <div id="verifyBanner" class="warn-banner hidden-soft">
-      <strong>E-mail nÃ£o verificado:</strong> confirme seu e-mail para publicar sua pÃ¡gina.
-      <button id="resendConfirmTop" class="btn small" style="margin-left:8px">Reenviar confirmaÃ§Ã£o</button>
+      <strong>E-mail não verificado:</strong> confirme seu e-mail para publicar sua página.
+      <button id="resendConfirmTop" class="btn small" style="margin-left:8px">Reenviar confirmação</button>
     </div>
-    <!-- CRIAR (novo fluxo em etapas) -->
+
+    <!-- CRIAR -->
     <section id="view-criar" class="screen">
       <div class="editor">
         <aside class="panel">
-          <!-- ETAPA 1: CabeÃ§alho -->
+          <!-- Etapa 1: Cabeçalho -->
           <div class="panel-group">
             <div class="step-header">
-              <span class="step-badge">1</span><h3 style="margin:0">CabeÃ§alho da pÃ¡gina</h3>
+              <span class="step-badge">1</span><h3 style="margin:0">Cabeçalho da página</h3>
             </div>
-
-            <!-- TÃ­tulo / SubtÃ­tulo / Cores de texto / Fonte -->
-            <label>TÃ­tulo
+            <label>Título
               <input id="pageTitle" type="text" placeholder="Nome do cliente">
             </label>
             <div class="grid-2">
-              <label>Cor do texto (tÃ­tulo)
+              <label>Cor do texto (título)
                 <input id="titleColor" type="color" value="#111827">
               </label>
               <label>Fonte
@@ -79,162 +65,114 @@
                 <span class="font-sample" id="titleFontSample">Exemplo de fonte</span>
               </label>
             </div>
-
-            <label>SubtÃ­tulo (opcional)
-              <input id="pageSubtitle" type="text" placeholder="ProfissÃ£o / slogan">
+            <label>Subtítulo (opcional)
+              <input id="pageSubtitle" type="text" placeholder="Profissão / slogan">
             </label>
             <div class="grid-2">
-              <label>Cor do texto (subtÃ­tulo)
+              <label>Cor do texto (subtítulo)
                 <input id="subtitleColor" type="color" value="#4b5563">
               </label>
               <div></div>
             </div>
-
-            <!-- Logo -->
             <div class="logo-row">
               <div>
                 <label>Logo/Foto
                   <input id="logoInput" type="file" accept="image/*">
                 </label>
-                <span class="thin-note">AparecerÃ¡ ao lado do texto.</span>
+                <span class="thin-note">Aparecerá ao lado do texto.</span>
               </div>
               <div class="logo-preview" id="logoPreview">LOGO</div>
             </div>
-
-            <!-- Fundo do cabeÃ§alho: sÃ³lido / gradiente / modelo pronto -->
             <label>Tipo de fundo</label>
             <div class="grid-2">
               <select id="headerBgType">
-                <option value="solid" selected>Cor sÃ³lida</option>
+                <option value="solid" selected>Cor sólida</option>
                 <option value="gradient">Cor gradiente</option>
                 <option value="preset">Modelo pronto</option>
               </select>
               <div></div>
             </div>
-
-            <!-- SÃ³lido -->
             <div id="bgSolidRow">
               <label>Cor do fundo
                 <input id="headerColor" type="color" value="#e5e7eb">
               </label>
             </div>
-
-            <!-- Gradiente -->
-            <div id="bgGradientRow" class="hidden-soft">
-              <div class="gradient-row">
-                <label>Cor 1
-                  <input id="gradColor1" type="color" value="#6366f1">
-                </label>
-                <label>Cor 2
-                  <input id="gradColor2" type="color" value="#ec4899">
-                </label>
-              </div>
-              <span class="thin-note">Ã‚ngulo fixo 135Â° (podemos liberar controle depois).</span>
+            <div id="bgGradientRow" class="gradient-row hidden-soft">
+              <label>Gradiente — cor 1
+                <input id="gradColor1" type="color" value="#6366f1">
+              </label>
+              <label>Gradiente — cor 2
+                <input id="gradColor2" type="color" value="#ec4899">
+              </label>
             </div>
-
-            <!-- Presets -->
             <div id="bgPresetRow" class="hidden-soft">
-              <div class="models-grid small" id="headerPresetsGrid">
-                <!-- presets simples -->
-                <div class="model-card" data-hpreset="pattern1">
-                  <div class="thumb"></div><strong>PadrÃ£o 1</strong>
-                </div>
-                <div class="model-card" data-hpreset="pattern2">
-                  <div class="thumb"></div><strong>PadrÃ£o 2</strong>
-                </div>
-                <div class="model-card" data-hpreset="pattern3">
-                  <div class="thumb"></div><strong>PadrÃ£o 3</strong>
-                </div>
+              <div id="headerPresetsGrid" class="models-grid small">
+                <div class="model-card" data-hpreset="pattern1"><div class="thumb"></div><strong>Padrão 1</strong></div>
+                <div class="model-card" data-hpreset="pattern2"><div class="thumb"></div><strong>Padrão 2</strong></div>
+                <div class="model-card" data-hpreset="pattern3"><div class="thumb"></div><strong>Padrão 3</strong></div>
               </div>
             </div>
-
             <div class="next-row">
-              <button class="btn primary" id="goButtons">PrÃ³ximo passo: BotÃµes</button>
+              <button class="btn primary" id="goButtons">Próximo passo: Botões</button>
             </div>
           </div>
 
-          <!-- ETAPA 2: BotÃµes -->
+          <!-- Etapa 2: Botões -->
           <div class="panel-group">
             <div class="step-header">
-              <span class="step-badge">2</span><h3 style="margin:0">BotÃµes da pÃ¡gina</h3>
-            </div>
-
-            <!-- Como adicionar: Criar novo / Usar modelo -->
-            <div class="models-toggle">
-              <button class="btn" id="optCreateNew">Criar novo</button>
-              <button class="btn" id="optUseModel">Usar modelo</button>
-            </div>
-            <span class="subtle">Escolha uma das opÃ§Ãµes acima. As configuraÃ§Ãµes abaixo mudam conforme a opÃ§Ã£o.</span>
-
-            <!-- BotÃµes existentes + reordenar -->
-            <div class="btn-row" style="margin-top:8px">
-              <button id="reorderHint" class="btn ghost">Reorganizar (arraste)</button>
+              <span class="step-badge">2</span><h3 style="margin:0">Botões da página</h3>
             </div>
             <ul id="buttonsList" class="list sortable"></ul>
-
-            <!-- Editor: Criar novo -->
-            <div id="createNewWrap" class="hidden-soft" style="margin-top:8px">
-              <h4>Editar botÃ£o selecionado</h4>
-              <label>Texto (rÃ³tulo do botÃ£o)
-                <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
+            <h4>Editar botão selecionado</h4>
+            <label>Texto (rótulo do botão)
+              <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
+            </label>
+            <label>Link
+              <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
+            </label>
+            <div class="grid-2">
+              <label>Cor do fundo
+                <input id="btnColor" type="color" value="#2b7a78">
               </label>
-              <label>Link
-                <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
+              <label>Cor do texto
+                <input id="btnTextColor" type="color" value="#ffffff">
               </label>
-
-              <div class="grid-2">
-                <label>Cor do fundo
-                  <input id="btnColor" type="color" value="#2b7a78">
-                </label>
-                <label>Cor do texto
-                  <input id="btnTextColor" type="color" value="#ffffff">
-                </label>
-              </div>
-
-              <div class="grid-2">
-                <label>Tamanho
-                  <select id="btnSize">
-                    <option value="md" selected>MÃ©dio</option>
-                    <option value="lg">Grande</option>
-                    <option value="sm">Pequeno</option>
-                  </select>
-                </label>
-                <label>Raio (arredondamento)
-                  <input id="btnRadius" type="range" min="6" max="24" value="14">
-                </label>
-              </div>
-
-              <label class="checkbox" style="margin-top:6px">
-                <input id="btnShadow" type="checkbox" checked> Sombra
-              </label>
-
-              <div class="btn-row" style="margin-top:8px">
-                <button id="addBtn" class="btn primary">+ Adicionar botÃ£o</button>
-                <button id="applyBtn" class="btn">Aplicar</button>
-                <button id="deleteBtn" class="btn danger">Excluir</button>
-              </div>
             </div>
-
-            <!-- Modelos: Usar modelo (grid com botÃ£o + no topo direito) -->
-            <div id="useModelWrap" class="hidden-soft" style="margin-top:8px">
-              <div class="models-grid" id="btnModelsGrid">
-                <!-- Preenchido via JS a partir de presetModels -->
-              </div>
-              <span class="thin-note">Clique no <strong>+</strong> do card para inserir o modelo imediatamente.</span>
+            <div class="grid-2">
+              <label>Tamanho
+                <select id="btnSize">
+                  <option value="md" selected>Médio</option>
+                  <option value="lg">Grande</option>
+                  <option value="sm">Pequeno</option>
+                </select>
+              </label>
+              <label>Raio (arredondamento)
+                <input id="btnRadius" type="range" min="6" max="24" value="14">
+              </label>
+            </div>
+            <label class="checkbox" style="margin-top:6px">
+              <input id="btnShadow" type="checkbox" checked> Sombra
+            </label>
+            <div class="btn-row" style="margin-top:8px">
+              <button id="addBtn" class="btn primary">+ Adicionar botão</button>
+              <button id="applyBtn" class="btn">Aplicar</button>
+              <button id="deleteBtn" class="btn danger">Excluir</button>
+            </div>
+            <div id="useModelWrap" style="margin-top:8px">
+              <div class="models-grid" id="btnModelsGrid"></div>
+              <span class="thin-note">Clique no + do card para inserir o modelo imediatamente.</span>
             </div>
           </div>
 
-          <!-- ETAPA 3: Identidade / PublicaÃ§Ã£o -->
+          <!-- Etapa 3: Identidade / Publicação -->
           <div class="panel-group">
             <div class="step-header">
-              <span class="step-badge">3</span><h3 style="margin:0">Identidade & PublicaÃ§Ã£o</h3>
+              <span class="step-badge">3</span><h3 style="margin:0">Identidade & Publicação</h3>
             </div>
-
             <label>Escolha o link
               <input id="pageSlug" type="text" placeholder="ex.: lucyana">
             </label>
-            <small class="muted">Seu link ficarÃ¡: <code>app.anoig.com/page.html#seu-link</code></small>
-
+            <small class="muted">Seu link ficará: <code>app.anoig.com/page.html#seu-link</code></small>
             <div class="btn-row sticky" style="margin-top:8px">
               <button id="saveDraft" class="btn" title="Salva no banco (precisa estar logado)">Salvar</button>
               <button id="publish" class="btn primary" title="Publica no banco (precisa estar logado)">Publicar</button>
@@ -249,8 +187,8 @@
             <div id="phoneHeader" class="phone-header">
               <div class="avatar" id="avatarBox">+</div>
               <div class="texts">
-                <div id="pvTitle" class="pv-title">TÃ­tulo da PÃ¡gina</div>
-                <div id="pvSubtitle" class="pv-subtitle">SubtÃ­tulo opcional</div>
+                <div id="pvTitle" class="pv-title">Título da Página</div>
+                <div id="pvSubtitle" class="pv-subtitle">Subtítulo opcional</div>
               </div>
             </div>
             <div id="pvButtons" class="phone-body"></div>
@@ -270,44 +208,26 @@
             <option value="draft">Rascunhos</option>
           </select>
         </label>
-        <label>MÃªs
+        <label>Mês
           <select id="fltMonth">
             <option value="all">Todos os meses</option>
           </select>
         </label>
         <button id="btnReloadProjects" class="btn">Atualizar</button>
       </div>
-
       <div id="projectsList" class="projects-grid"></div>
       <div id="projectsEmpty" class="muted" style="display:none;margin-top:8px">Nenhum projeto encontrado.</div>
       <small class="muted">Dica: clique em <strong>Editar</strong> para carregar o projeto na aba <em>Criar</em>.</small>
     </section>
 
-    <!-- MODELOS (vitrine geral, permanece) -->
+    <!-- MODELOS -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
-      <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
       <div class="models-grid">
-        <div class="model-card" data-model="essencial">
-          <div class="thumb"></div>
-          <strong>Essencial</strong>
-          <button class="btn small">Aplicar</button>
-        </div>
-        <div class="model-card" data-model="promo">
-          <div class="thumb"></div>
-          <strong>Promo</strong>
-          <button class="btn small">Aplicar</button>
-        </div>
-        <div class="model-card" data-model="servicos">
-          <div class="thumb"></div>
-          <strong>ServiÃ§os</strong>
-          <button class="btn small">Aplicar</button>
-        </div>
-        <div class="model-card" data-model="restaurante">
-          <div class="thumb"></div>
-          <strong>Restaurante</strong>
-          <button class="btn small">Aplicar</button>
-        </div>
+        <div class="model-card" data-model="essencial"><div class="thumb"></div><strong>Essencial</strong><button class="btn small">Aplicar</button></div>
+        <div class="model-card" data-model="promo"><div class="thumb"></div><strong>Promo</strong><button class="btn small">Aplicar</button></div>
+        <div class="model-card" data-model="servicos"><div class="thumb"></div><strong>Serviços</strong><button class="btn small">Aplicar</button></div>
+        <div class="model-card" data-model="restaurante"><div class="thumb"></div><strong>Restaurante</strong><button class="btn small">Aplicar</button></div>
       </div>
     </section>
 
@@ -323,13 +243,13 @@
         </label>
         <div class="btn-row" id="emailConfirmWrap" style="margin-top:6px">
           <small id="emailStatus" class="muted"></small>
-          <button id="resendConfirm" type="button" class="btn small">Reenviar confirmaÃ§Ã£o</button>
+          <button id="resendConfirm" type="button" class="btn small">Reenviar confirmação</button>
         </div>
         <label>WhatsApp
           <input id="meuWhatsapp" type="text" placeholder="(xx) xxxxx-xxxx">
         </label>
-        <label>EndereÃ§o completo
-          <input id="meuEndereco" type="text" placeholder="Rua, nÂº, bairro, cidade, UF, CEP">
+        <label>Endereço completo
+          <input id="meuEndereco" type="text" placeholder="Rua, nº, bairro, cidade, UF, CEP">
         </label>
         <label>Foto / Logo
           <input type="file" accept="image/*">
@@ -344,9 +264,9 @@
           </select>
         </label>
         <div class="btn-row">
-          <button type="button" id="savePrefs" class="btn">Salvar preferÃªncias</button>
+          <button type="button" id="savePrefs" class="btn">Salvar preferências</button>
         </div>
-          <div class="btn-row"><button type="button" id="btnSignOut" class="btn danger">Sair</button></div>
+        <div class="btn-row"><button type="button" id="btnSignOut" class="btn danger">Sair</button></div>
       </form>
     </section>
 
@@ -356,17 +276,17 @@
       <div class="plans">
         <div class="plan">
           <h3>Recorrente</h3>
-          <div class="price">R$200<span>/mÃªs</span></div>
+          <div class="price">R$200<span>/mês</span></div>
           <ul>
-            <li>Pagamento automÃ¡tico</li>
+            <li>Pagamento automático</li>
             <li>Mais barato</li>
-            <li>Sem preocupaÃ§Ã£o de renovar</li>
+            <li>Sem preocupação de renovar</li>
           </ul>
           <button class="btn primary">Assinar recorrente</button>
         </div>
         <div class="plan">
           <h3>Mensal (flex)</h3>
-          <div class="price">R$300<span>/mÃªs</span></div>
+          <div class="price">R$300<span>/mês</span></div>
           <ul>
             <li>Parcele em 6x de R$50</li>
             <li>Teste por 30 dias</li>
@@ -379,16 +299,14 @@
   </main>
 
   <footer class="foot">
-    <small>Â© Anoig â€¢ v1.1 (Fluxo de criaÃ§Ã£o refeito)</small>
+    <small>© Anoig — v1.1 (Fluxo de criação refeito)</small>
   </footer>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Templates SVG (mantÃ©m, caso vocÃª use mais tarde) -->
+  <!-- Templates SVG -->
   <script src="svg-templates.js?v=3"></script>
   <!-- App -->
   <script src="app.js?v=13"></script>
 </body>
 </html>
-
-

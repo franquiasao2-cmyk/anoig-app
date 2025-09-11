@@ -689,13 +689,13 @@ function bindAccountPrefs(){
         resendTopBtn.disabled = true;
         const u = await getCurrentUser();
         const email = u && u.email;
-        if(!email){ alert('Fa�a login novamente.'); return; }
+        if(!email){ alert('Faça login novamente.'); return; }
         if(!supa || !supa.auth || typeof supa.auth.resend !== 'function'){
-          alert('Reenvio de confirma��o indispon�vel no momento.'); return;
+          alert('Reenvio de confirmação indisponível no momento.'); return;
         }
         const { error } = await supa.auth.resend({ type:'signup', email });
         if(error){ alert('Erro ao reenviar: '+error.message); return; }
-        alert('Enviamos um novo e-mail de confirma��o.');
+        alert('Enviamos um novo e-mail de confirmação.');
       } catch(e){ console.error(e); alert('Falha ao reenviar.'); }
       finally { resendTopBtn.disabled = false; }
     });
@@ -726,6 +726,7 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
 
 
 
