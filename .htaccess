@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Redireciona somente a raiz (/) para a página de login
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /login.html [R=301,L]
+
+# Opcional: se quiser servir login.html como página inicial sem redirecionar,
+# use a linha abaixo em vez das 3 acima (comente as 3 acima e descomente esta):
+# DirectoryIndex login.html index.html
