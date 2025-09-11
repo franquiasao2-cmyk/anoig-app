@@ -45,15 +45,21 @@
     function goSignup(){ location.href = 'signup.html'; }
     function toggleForgot(){ document.getElementById('forgotWrap').classList.toggle('hidden'); }
     document.addEventListener('DOMContentLoaded', async ()=>{
+      // Se já estiver logado, mostra aviso com botão para o painel
       try{
         if(supa){
-          const { data: { user } } = await supa.auth.getUser();
-          if(user){ location.href = 'dashboard.html?authed=1'; return; }
+          const { data:{ user } } = await supa.auth.getUser();
+          if(user){
+            const box=document.getElementById('alreadyLogged');
+            if(box) box.classList.remove('hidden');
+            const go=document.getElementById('goDashboard');
+            if(go) go.addEventListener('click', ()=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); location.href='dashboard.html'; });
+          }
         }
-      }catch(_){ }
-      document.getElementById('loginForm').addEventListener('submit', doLogin);
+      }catch(_){}
+      document.getElementById('loginForm').addEventListener('submit', (e)=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); doLogin(e); });
       document.getElementById('forgotBtn').addEventListener('click', toggleForgot);
-      document.getElementById('sendReset').addEventListener('click', doReset);
+      document.getElementById('sendReset').addEventListener('click', (e)=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); doReset(e); });
       document.getElementById('goSignup').addEventListener('click', goSignup);
     });
   </script>
@@ -94,3 +100,4 @@
   </div>
   </body>
 </html>
+

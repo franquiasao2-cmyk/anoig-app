@@ -37,6 +37,9 @@ function escapeHtml(s){
   const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
   return String(s || '').replace(/[&<>"']/g, ch => map[ch]);
 }
+// Loading overlay helpers (expects #loadingOverlay in DOM)
+function showLoading(){ var el=qs('#loadingOverlay'); if(el) el.classList.remove('hidden-soft'); }
+function hideLoading(){ var el=qs('#loadingOverlay'); if(el) el.classList.add('hidden-soft'); }
 function sanitizeSlug (s){
   s=(s||'').toLowerCase();
   if(s.normalize) s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -729,6 +732,7 @@ function bindAccountPrefs(){
 // Handlers mínimos de autenticação no app principal
 async function handleSignOut(){
   try {
+    showLoading();
     if(supa) await supa.auth.signOut();
   } catch(_) {}
   location.href='login.html';
