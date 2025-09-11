@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Página Pública</title>
+  <title>PÃ¡gina PÃºblica</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body{display:flex;justify-content:center;align-items:flex-start;padding:24px}
@@ -19,8 +19,8 @@
       <div id="pubHeader" class="phone-header">
         <div class="avatar">+</div>
         <div class="texts">
-          <div id="pubTitle" class="pv-title">Título</div>
-          <div id="pubSubtitle" class="pv-subtitle">Subtítulo</div>
+          <div id="pubTitle" class="pv-title">TÃ­tulo</div>
+          <div id="pubSubtitle" class="pv-subtitle">SubtÃ­tulo</div>
         </div>
       </div>
       <div id="pubButtons" class="phone-body"></div>
@@ -33,29 +33,39 @@
       const warn = document.getElementById('warn');
       if(!slug){
         warn.style.display='block';
-        warn.textContent = 'Link inválido. Falta o slug na URL (#slug).';
+        warn.textContent = 'Link invÃ¡lido. Falta o slug na URL (#slug).';
         return;
       }
       const KEY = 'anoig-public-' + slug;
       const raw = localStorage.getItem(KEY);
       if(!raw){
         warn.style.display='block';
-        warn.textContent = 'Página não encontrada neste navegador. (No MVP real, os dados vêm do servidor.)';
+        warn.textContent = 'PÃ¡gina nÃ£o encontrada neste navegador. (No MVP real, os dados vÃªm do servidor.)';
         return;
       }
       try{
         const data = JSON.parse(raw);
         // header
-        document.getElementById('pubTitle').textContent = data.header?.title || 'Título';
+        document.getElementById('pubTitle').textContent = data.header?.title || 'TÃ­tulo';
         document.getElementById('pubSubtitle').textContent = data.header?.subtitle || '';
         const header = document.getElementById('pubHeader');
-        const preset = data.header?.preset || 'pattern1';
-        if(preset === 'solid'){
-          header.style.background = data.header?.color || '#1f2937';
-        } else if(preset === 'pattern2'){
-          header.style.background = 'linear-gradient(135deg,#283552,#1b2740)';
+        const h = data.header || {};
+        const preset = h.preset || 'pattern1';
+        const bgType = h.bgType || (['pattern1','pattern2','pattern3'].includes(preset) ? 'preset' : preset);
+        if(bgType === 'solid'){
+          header.style.background = h.color || '#1f2937';
+        } else if(bgType === 'gradient'){
+          const g1 = h.grad1 || '#6366f1';
+          const g2 = h.grad2 || '#ec4899';
+          header.style.background =  `linear-gradient(135deg, ${g1}, ${g2})`; 
         } else {
-          header.style.background = 'linear-gradient(135deg,#1f2937,#111827)';
+          if(preset === 'pattern2'){
+            header.style.background = 'linear-gradient(135deg,#283552,#1b2740)';
+          } else if(preset === 'pattern3'){
+            header.style.background = 'linear-gradient(135deg,#fef3c7,#fca5a5)';
+          } else {
+            header.style.background = 'linear-gradient(135deg,#1f2937,#111827)';
+          }
         }
         // buttons
         const wrap = document.getElementById('pubButtons');
@@ -69,7 +79,7 @@
           a.innerHTML = `
             <div class="card-inner">
               <div class="card-icon" style="background:${b.color || '#2b7a78'}"></div>
-              <div class="card-label">${b.label || 'Botão'}</div>
+              <div class="card-label">${b.label || 'BotÃ£o'}</div>
             </div>`;
           wrap.appendChild(a);
         });
@@ -81,3 +91,5 @@
   </script>
 </body>
 </html>
+
+

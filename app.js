@@ -398,6 +398,35 @@ function validateDraft(){
   return true;
 }
 
+
+// Salva uma cópia pública mínima no localStorage
+function savePublicToLocal(){
+  try{
+    const data={
+      header:{
+        title: state.header.title,
+        subtitle: state.header.subtitle||'',
+        bgType: state.header.bgType||'solid',
+        color: state.header.color||'#1f2937',
+        grad1: state.header.grad1||'#6366f1',
+        grad2: state.header.grad2||'#ec4899',
+        preset: state.header.preset||'pattern1'
+      },
+      buttons: (state.buttons||[]).map(b=>({
+        label: b.label,
+        link: b.link,
+        color: b.color||'#2b7a78',
+        textColor: b.textColor||'#ffffff',
+        size: b.size||'md',
+        radius: (typeof b.radius==='number'?b.radius:14),
+        shadow: !!b.shadow
+      }))
+    };
+    localStorage.setItem('anoig-public-'+state.slug, JSON.stringify(data));
+  }catch(e){
+    console.warn('Falha ao salvar público local', e);
+  }
+}
 async function saveToDatabase(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para salvar.'); return; }
   if(!supa){ alert('Supabase indisponÃ­vel'); return; }
@@ -466,6 +495,7 @@ async function publishPage(){
   if(selErr){ console.error(selErr); alert('Erro localizando pÃ¡gina: '+selErr.message); return; }
   const { error: pubErr } = await supa.from('pages').update({ is_published:true, published_at:new Date().toISOString(), updated_at:new Date().toISOString() }).eq('id',pg.id).eq('owner_id',user.id);
   if(pubErr){ console.error(pubErr); alert('Erro ao publicar: '+pubErr.message); return; }
+  try{ savePublicToLocal(); }catch(_){ }
   alert('PÃ¡gina publicada!');
 }
 
@@ -589,6 +619,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 });
 
 window.addEventListener('hashchange', setScreenFromHash);
+
 
 
 
