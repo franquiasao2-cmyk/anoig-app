@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Anoig App – Painel</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Ajustes pontuais para a nova UI */
+    .step-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .step-badge { background:var(--primary, #2b7a78); color:#fff; border-radius:999px; font-weight:700; padding:2px 10px; font-size:12px; }
+    .subtle { color:var(--muted, #6b7280); font-size:12px; }
+    .models-toggle { display:flex; gap:8px; margin:8px 0 4px; }
+    .models-toggle .btn { flex:1; }
+    .models-grid.small .model-card { position:relative; }
+    .model-plus { position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%; background:#22c55e; color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.15); }
+    .gradient-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .logo-row { display:flex; align-items:center; gap:12px; }
+    .logo-preview { width:48px; height:48px; border-radius:12px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-weight:700; color:#9ca3af; overflow:hidden; }
+    .next-row { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+    .hidden-soft { display:none; }
+    .font-sample { font-size:12px; color:var(--muted, #6b7280); }
+    .thin-note { font-size:12px; color:var(--muted, #6b7280); margin-top:4px; display:block; }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -16,7 +33,7 @@
       </div>
     </div>
 
-    <!-- AUTENTICAÇÃO -->
+    <!-- Autenticação rápida -->
     <div id="authBox" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
       <span id="authHello" style="display:none">Olá, <strong id="authEmail"></strong></span>
       <input id="authEmailInput" type="email" placeholder="seuemail@exemplo.com" class="inp">
@@ -36,134 +53,191 @@
   </header>
 
   <main id="view">
-    <!-- CRIAR -->
+    <!-- CRIAR (novo fluxo em etapas) -->
     <section id="view-criar" class="screen">
       <div class="editor">
         <aside class="panel">
+          <!-- ETAPA 1: Cabeçalho -->
           <div class="panel-group">
-            <h3>Identidade da página</h3>
-            <label>Slug (link público)
-              <input id="pageSlug" type="text" placeholder="ex.: lucyana">
+            <div class="step-header">
+              <span class="step-badge">1</span><h3 style="margin:0">Cabeçalho da página</h3>
+            </div>
+
+            <!-- Título / Subtítulo / Cores de texto / Fonte -->
+            <label>Título
+              <input id="pageTitle" type="text" placeholder="Nome do cliente">
             </label>
-            <small class="muted">Seu link ficará: <code>app.anoig.com/page.html#seu-slug</code></small>
+            <div class="grid-2">
+              <label>Cor do texto (título)
+                <input id="titleColor" type="color" value="#111827">
+              </label>
+              <label>Fonte
+                <select id="titleFont">
+                  <option value="Inter, Arial, sans-serif" selected>Inter</option>
+                  <option value="Poppins, Arial, sans-serif">Poppins</option>
+                  <option value="Montserrat, Arial, sans-serif">Montserrat</option>
+                  <option value="Roboto, Arial, sans-serif">Roboto</option>
+                </select>
+                <span class="font-sample" id="titleFontSample">Exemplo de fonte</span>
+              </label>
+            </div>
+
+            <label>Subtítulo (opcional)
+              <input id="pageSubtitle" type="text" placeholder="Profissão / slogan">
+            </label>
+            <div class="grid-2">
+              <label>Cor do texto (subtítulo)
+                <input id="subtitleColor" type="color" value="#4b5563">
+              </label>
+              <div></div>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo-row">
+              <div>
+                <label>Logo/Foto
+                  <input id="logoInput" type="file" accept="image/*">
+                </label>
+                <span class="thin-note">Aparecerá ao lado do texto.</span>
+              </div>
+              <div class="logo-preview" id="logoPreview">LOGO</div>
+            </div>
+
+            <!-- Fundo do cabeçalho: sólido / gradiente / modelo pronto -->
+            <label>Tipo de fundo</label>
+            <div class="grid-2">
+              <select id="headerBgType">
+                <option value="solid" selected>Cor sólida</option>
+                <option value="gradient">Cor gradiente</option>
+                <option value="preset">Modelo pronto</option>
+              </select>
+              <div></div>
+            </div>
+
+            <!-- Sólido -->
+            <div id="bgSolidRow">
+              <label>Cor do fundo
+                <input id="headerColor" type="color" value="#e5e7eb">
+              </label>
+            </div>
+
+            <!-- Gradiente -->
+            <div id="bgGradientRow" class="hidden-soft">
+              <div class="gradient-row">
+                <label>Cor 1
+                  <input id="gradColor1" type="color" value="#6366f1">
+                </label>
+                <label>Cor 2
+                  <input id="gradColor2" type="color" value="#ec4899">
+                </label>
+              </div>
+              <span class="thin-note">Ângulo fixo 135° (podemos liberar controle depois).</span>
+            </div>
+
+            <!-- Presets -->
+            <div id="bgPresetRow" class="hidden-soft">
+              <div class="models-grid small" id="headerPresetsGrid">
+                <!-- presets simples -->
+                <div class="model-card" data-hpreset="pattern1">
+                  <div class="thumb"></div><strong>Padrão 1</strong>
+                </div>
+                <div class="model-card" data-hpreset="pattern2">
+                  <div class="thumb"></div><strong>Padrão 2</strong>
+                </div>
+                <div class="model-card" data-hpreset="pattern3">
+                  <div class="thumb"></div><strong>Padrão 3</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="next-row">
+              <button class="btn primary" id="goButtons">Próximo passo: Botões</button>
+            </div>
           </div>
 
+          <!-- ETAPA 2: Botões -->
           <div class="panel-group">
-            <h3>Botões da página</h3>
-            <div class="btn-row">
-              <button id="addBtn" class="btn primary">+ Adicionar botão</button>
+            <div class="step-header">
+              <span class="step-badge">2</span><h3 style="margin:0">Botões da página</h3>
+            </div>
+
+            <!-- Como adicionar: Criar novo / Usar modelo -->
+            <div class="models-toggle">
+              <button class="btn" id="optCreateNew">Criar novo</button>
+              <button class="btn" id="optUseModel">Usar modelo</button>
+            </div>
+            <span class="subtle">Escolha uma das opções acima. As configurações abaixo mudam conforme a opção.</span>
+
+            <!-- Botões existentes + reordenar -->
+            <div class="btn-row" style="margin-top:8px">
               <button id="reorderHint" class="btn ghost">Reorganizar (arraste)</button>
             </div>
             <ul id="buttonsList" class="list sortable"></ul>
-          </div>
 
-          <div class="panel-group">
-            <h3>Editar botão selecionado</h3>
-
-            <!-- Tipo do botão -->
-            <div class="grid-2">
-              <label>Tipo do botão
-                <select id="btnKind">
-                  <option value="native">Nativo (CSS)</option>
-                  <option value="svg">SVG (Canva)</option>
-                </select>
+            <!-- Editor: Criar novo -->
+            <div id="createNewWrap" class="hidden-soft" style="margin-top:8px">
+              <h4>Editar botão selecionado</h4>
+              <label>Texto (rótulo do botão)
+                <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
               </label>
-              <label id="svgTemplateWrap" style="display:none">Modelo SVG
-                <select id="svgTemplate">
-                  <!-- opções vêm do svg-templates.js -->
-                </select>
+              <label>Link
+                <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
               </label>
-            </div>
 
-            <!-- Campos em comum -->
-            <label>Texto (rótulo do botão)
-              <input id="btnText" type="text" placeholder="Ex.: Fale no WhatsApp">
-            </label>
-            <label>Link
-              <input id="btnLink" type="url" placeholder="https://wa.me/5591...">
-            </label>
-
-            <!-- Controles para botão Nativo (CSS) -->
-            <div id="nativeControls">
               <div class="grid-2">
-                <label>Cor base
+                <label>Cor do fundo
                   <input id="btnColor" type="color" value="#2b7a78">
                 </label>
                 <label>Cor do texto
-                  <input id="btnTextColor" type="color" value="#111827">
+                  <input id="btnTextColor" type="color" value="#ffffff">
                 </label>
               </div>
 
               <div class="grid-2">
-                <label>Estilo
-                  <select id="btnStyle">
-                    <option value="solid">Sólido</option>
-                    <option value="gradient">Gradiente</option>
-                    <option value="glass">Vidrificado</option>
-                    <option value="outline">Contorno</option>
-                    <option value="fantasy">Fantasia</option>
-                  </select>
-                </label>
                 <label>Tamanho
                   <select id="btnSize">
-                    <option value="md">Médio</option>
+                    <option value="md" selected>Médio</option>
                     <option value="lg">Grande</option>
                     <option value="sm">Pequeno</option>
                   </select>
                 </label>
-              </div>
-
-              <div class="grid-2">
                 <label>Raio (arredondamento)
                   <input id="btnRadius" type="range" min="6" max="24" value="14">
                 </label>
-                <label class="checkbox">
-                  <input id="btnShadow" type="checkbox" checked> Sombra
-                </label>
+              </div>
+
+              <label class="checkbox" style="margin-top:6px">
+                <input id="btnShadow" type="checkbox" checked> Sombra
+              </label>
+
+              <div class="btn-row" style="margin-top:8px">
+                <button id="addBtn" class="btn primary">+ Adicionar botão</button>
+                <button id="applyBtn" class="btn">Aplicar</button>
+                <button id="deleteBtn" class="btn danger">Excluir</button>
               </div>
             </div>
 
-            <!-- Controles para botão SVG (Canva) -->
-            <div id="svgControls" style="display:none">
-              <div class="grid-2">
-                <label>Cor principal (preenche o fundo do SVG)
-                  <input id="svgColor" type="color" value="#2b7a78">
-                </label>
-                <label>Cor do texto (dentro do SVG)
-                  <input id="svgTextColor" type="color" value="#ffffff">
-                </label>
+            <!-- Modelos: Usar modelo (grid com botão + no topo direito) -->
+            <div id="useModelWrap" class="hidden-soft" style="margin-top:8px">
+              <div class="models-grid" id="btnModelsGrid">
+                <!-- Preenchido via JS a partir de presetModels -->
               </div>
-              <small class="muted">Este botão usa seu arquivo SVG como base. Texto e cores são aplicados no próprio SVG.</small>
-            </div>
-
-            <div class="btn-row" style="margin-top:8px">
-              <button id="applyBtn" class="btn">Aplicar</button>
-              <button id="deleteBtn" class="btn danger">Excluir</button>
+              <span class="thin-note">Clique no <strong>+</strong> do card para inserir o modelo imediatamente.</span>
             </div>
           </div>
 
+          <!-- ETAPA 3: Identidade / Publicação -->
           <div class="panel-group">
-            <h3>Cabeçalho da página</h3>
-            <label>Título
-              <input id="pageTitle" type="text" placeholder="Nome do cliente">
-            </label>
-            <label>Subtítulo (opcional)
-              <input id="pageSubtitle" type="text" placeholder="Profissão / slogan">
-            </label>
-            <label>Fundo do cabeçalho
-              <select id="headerPreset">
-                <option value="pattern1">Padrão 1</option>
-                <option value="pattern2">Padrão 2</option>
-                <option value="solid">Cor sólida</option>
-              </select>
-            </label>
-            <label>Cor sólida (se escolhido)
-              <input id="headerColor" type="color" value="#e5e7eb">
-            </label>
-          </div>
+            <div class="step-header">
+              <span class="step-badge">3</span><h3 style="margin:0">Identidade & Publicação</h3>
+            </div>
 
-          <div class="panel-group">
-            <div class="btn-row sticky">
+            <label>Escolha o link
+              <input id="pageSlug" type="text" placeholder="ex.: lucyana">
+            </label>
+            <small class="muted">Seu link ficará: <code>app.anoig.com/page.html#seu-link</code></small>
+
+            <div class="btn-row sticky" style="margin-top:8px">
               <button id="saveDraft" class="btn" title="Salva no banco (precisa estar logado)">Salvar</button>
               <button id="publish" class="btn primary" title="Publica no banco (precisa estar logado)">Publicar</button>
               <button id="copyLink" class="btn ghost">Copiar link</button>
@@ -175,7 +249,7 @@
         <section class="preview">
           <div class="phone">
             <div id="phoneHeader" class="phone-header">
-              <div class="avatar">+</div>
+              <div class="avatar" id="avatarBox">+</div>
               <div class="texts">
                 <div id="pvTitle" class="pv-title">Título da Página</div>
                 <div id="pvSubtitle" class="pv-subtitle">Subtítulo opcional</div>
@@ -211,7 +285,7 @@
       <small class="muted">Dica: clique em <strong>Editar</strong> para carregar o projeto na aba <em>Criar</em>.</small>
     </section>
 
-    <!-- MODELOS -->
+    <!-- MODELOS (vitrine geral, permanece) -->
     <section id="view-modelos" class="screen hidden">
       <h2>Modelos Prontos</h2>
       <p class="muted">Escolha um modelo. Depois edite/exclua/inclua/reordene na aba <strong>Criar</strong>.</p>
@@ -296,20 +370,14 @@
   </main>
 
   <footer class="foot">
-    <small>© Anoig • v0.9 (SVG Canva editável)</small>
+    <small>© Anoig • v1.1 (Fluxo de criação refeito)</small>
   </footer>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Templates SVG (NOVO) -->
-  <script src="svg-templates.js?v=1"></script>
+  <!-- Templates SVG (mantém, caso você use mais tarde) -->
+  <script src="svg-templates.js?v=2"></script>
   <!-- App -->
-  <script src="app.js?v=9"></script>
-
-  <noscript>
-    <div style="padding:12px;margin:12px;border:1px solid #444;border-radius:8px;color:#b91c1c;">
-      O JavaScript está desativado. Ative para usar o painel.
-    </div>
-  </noscript>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
