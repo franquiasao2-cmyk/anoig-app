@@ -21,17 +21,15 @@
   <div id="loadingOverlay" class="loading-overlay hidden-soft"><div class="loading-card"><img src="assets/logo-transparent.png" alt="Logo"><div class="loading-text">Carregando…</div></div></div>
   <header class="topbar topnav-large">
     <div class="topnav-inner">
-      <div class="topnav-left"><img class="brand-mark" src="assets/logo-transparent.png" alt="Logo"></div>
-      <nav class="tabs topnav-menu">
+      <div class="topnav-left"><img class="brand-mark" src="assets/logo-transparent.png" alt="Logo"><div class="greet">Olá, <strong id="brandUserName"></strong></div><div id="brandUserAvatar" class="avatar-user small clickable"><span style="font-size:.9em">+</span></div><div id="userMenu" class="user-menu hidden-soft"><a href="#dados" class="menu-item">Meus dados</a><a href="#criar" class="menu-item">Criar</a><a href="#pagamentos" class="menu-item">Pagamentos</a><button id="menuUniversidade" class="menu-item" type="button">Universidade</button><button id="menuSignOut" class="menu-item danger">Sair</button></div></div>
+      <nav class="tabs topnav-menu hidden-soft" aria-hidden="true">
         <a href="#criar" class="tab topnav-item"><span>Criar</span><span>&nbsp;</span></a>
         <a href="#projetos" class="tab topnav-item"><span>Meus</span><span>Projetos</span></a>
         <a href="#pagamentos" class="tab topnav-item"><span>Meus</span><span>Pagamentos</span></a>
         <a href="#dados" class="tab topnav-item"><span>Meus</span><span>Dados</span></a>
         <a href="#admin" class="tab topnav-item admin-only hidden-soft"><span>Admin</span><span>&nbsp;</span></a>
       </nav>
-      <div class="topnav-right">
-        <div id="brandUserAvatar" class="avatar-user small"><span style="font-size:.9em">+</span></div>
-      </div>
+      <div class="topnav-right"></div>
     </div>
     <!-- Login removido do cabeçalho: acesso via login.html -->
     
@@ -293,6 +291,11 @@
         </div>
         <div class="btn-row"><button type="button" id="btnSignOut" class="btn danger">Sair</button></div>
       </form>
+    </section>
+    <!-- UNIVERSIDADE -->
+    <section id="view-universidade" class="screen hidden">
+      <h2>Universidade</h2>
+      <p class="muted">Conteúdo em breve.</p>
     </section>
 
     <!-- PAGAMENTOS -->

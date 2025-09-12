@@ -791,6 +791,16 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     up && up.addEventListener('click', ()=>{ location.href='signup.html'; });
     si && si.addEventListener('click', ()=>{ location.href='login.html'; });
     so && so.addEventListener('click', handleSignOut);
+
+    // Menu do avatar (dropdown)
+    const av = qs('#brandUserAvatar');
+    const menu = qs('#userMenu');
+    const outBtn = qs('#menuSignOut');
+    if(av && menu){
+      av.addEventListener('click', (e)=>{ e.stopPropagation(); menu.classList.toggle('hidden-soft'); });
+      document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) menu.classList.add('hidden-soft'); });
+    }
+    if(outBtn){ outBtn.addEventListener('click', handleSignOut); }
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
 });
 

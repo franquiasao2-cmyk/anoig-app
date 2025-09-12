@@ -55,16 +55,25 @@ a { text-decoration: none; }
 }
 
 /* --- Top Nav (dashboard) --- */
-.topbar.topnav-large { display: block; padding: 12px 16px; background:#000; color:#fff; }
+.topbar.topnav-large { display: block; padding: 12px 16px; background:#203236; color:#eaf6f8; }
 .topnav-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.topnav-left { position: relative; display:flex; align-items:center; gap:12px; }
 .topnav-left .brand-mark { width: 48px; height: 48px; object-fit: contain; display: block; }
+.topnav-left .greet { color:#9ad0d6; font-weight:700; letter-spacing:.2px; }
 .topnav-right { display: flex; align-items: center; gap: 12px; }
-.avatar-user.small { width: 40px; height: 40px; }
+.avatar-user.small { width: 40px; height: 40px; cursor:pointer; }
 .topnav-menu { flex: 1; display: flex; align-items: center; justify-content: space-evenly; gap: 16px; }
 .topnav-menu .tab { margin: 0; padding: 6px 8px; background: transparent; border: none; border-radius: 0; color: #fff; display: flex; flex-direction: column; align-items: center; text-align: center; font-weight: 600; line-height: 1.1; }
 .topnav-menu .tab:hover { color: #ffeb3b; }
 .topnav-menu .tab span { color: inherit; }
 .topbar.topnav-large .topnav-menu .tab.active { background: transparent; color: #fff; text-decoration: underline; }
+
+/* Dropdown de usuário */
+.user-menu { position:absolute; top:64px; left:0; background:#203236; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:8px; box-shadow:0 10px 30px rgba(0,0,0,.35); min-width:220px; z-index:1000; }
+.user-menu .menu-item { display:block; width:100%; text-align:left; padding:10px 12px; border-radius:10px; color:#eaf6f8; background:transparent; border:none; font-weight:700; cursor:pointer; }
+.user-menu .menu-item:hover { background:rgba(154,208,214,.18); color:#ffffff; }
+.user-menu .menu-item.danger { background:#dc2626; color:#fff; text-align:center; margin-top:6px; }
+.user-menu .menu-item.danger:hover { background:#b91c1c; }
 
 @media (max-width: 768px) {
   .topnav-inner { gap: 12px; }
@@ -264,4 +273,3 @@ input[type=color] { padding: 0; height: 36px; }
   .phone { width: 100%; max-width: 420px; margin: 0 auto; }
   .models-grid .model-card { min-width: 140px; }
 }
-
