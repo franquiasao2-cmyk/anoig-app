@@ -121,15 +121,16 @@ input[type=color] { padding: 0; height: 36px; }
 /* PREVIEW */
 .preview { flex: 1; display: flex; justify-content: center; align-items: flex-start; }
 .phone {
-  width: 320px; min-height: 500px;
+  width: 420px; min-height: 640px;
   border: 1px solid var(--stroke);
-  border-radius: 20px;
+  border-radius: 28px;
   background: var(--surface);
   display: flex; flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
-.phone-header { padding: 16px; text-align: center; }
-.phone-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.phone-header { padding: 24px; text-align: center; }
+.phone-body { flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 
 /* Preview header elements */
 .phone-header .avatar {
@@ -147,19 +148,31 @@ input[type=color] { padding: 0; height: 36px; }
   background-repeat: no-repeat;
   font-weight: 700;
 }
-.pv-title { font-weight: 700; font-size: 18px; line-height: 1.2; }
-.pv-subtitle { font-size: 14px; line-height: 1.2; margin-top: 2px; color: var(--muted); }
+.pv-title { font-weight: 800; font-size: 22px; line-height: 1.25; }
+.pv-subtitle { font-size: 16px; line-height: 1.25; margin-top: 4px; color: var(--muted); }
 
 /* BOTÕES VISUAIS */
 .card-btn {
   display: block;
-  border-radius: 14px;
+  border-radius: 24px;
   text-align: center;
-  font-weight: bold;
-  padding: 12px;
+  font-weight: 800;
+  padding: 18px 16px;
+  min-height: 96px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
-.card-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.card-label { font-size: 0.9em; }
+.card-btn[data-shadow='false'] { box-shadow: none; }
+.card-inner { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.card-icon { width: 36px; height: 36px; border-radius: 10px; background:#111827; }
+.card-label { font-size: 20px; letter-spacing: .2px; }
+
+/* Button sizes */
+.card-btn[data-size='lg'] { min-height: 112px; }
+.card-btn[data-size='lg'] .card-label { font-size: 24px; }
+.card-btn[data-size='lg'] .card-icon { width: 40px; height: 40px; }
+.card-btn[data-size='md'] .card-label { font-size: 20px; }
+.card-btn[data-size='sm'] { min-height: 80px; }
+.card-btn[data-size='sm'] .card-label { font-size: 18px; }
 
 /* PROJETOS */
 .projects-grid { display: grid; gap: 12px; margin-top: 12px; }

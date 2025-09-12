@@ -344,7 +344,7 @@ function bindButtonsUI(){
         card.addEventListener('click', ()=>{
           state.buttons.push({
             label:m.label, link:m.link, color:m.color, textColor:m.textColor,
-            size:m.size||'md', radius: (typeof m.radius==='number'?m.radius:14), shadow: !!m.shadow
+            size:m.size||'lg', radius: (typeof m.radius==='number'?m.radius:22), shadow: !!m.shadow
           });
           state.selectedIndex = state.buttons.length-1;
           refreshButtonsUI();
@@ -360,8 +360,8 @@ function bindButtonsUI(){
       link: (btnLink?.value||'https://'),
       color: (btnColor?.value||'#2b7a78'),
       textColor: (btnTextColor?.value||'#ffffff'),
-      size: (btnSize?.value||'md'),
-      radius: Number(btnRadius?.value||14),
+      size: (btnSize?.value||'lg'),
+      radius: Number(btnRadius?.value||22),
       shadow: !!(btnShadow?.checked)
     };
     state.buttons.push(b);
@@ -376,8 +376,8 @@ function bindButtonsUI(){
     b.link  = btnLink?.value||'https://';
     b.color = btnColor?.value||'#2b7a78';
     b.textColor = btnTextColor?.value||'#ffffff';
-    b.size  = btnSize?.value||'md';
-    b.radius= Number(btnRadius?.value||14);
+    b.size  = btnSize?.value||'lg';
+    b.radius= Number(btnRadius?.value||22);
     b.shadow= !!(btnShadow?.checked);
     refreshButtonsUI();
   });
