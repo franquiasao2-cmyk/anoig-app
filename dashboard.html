@@ -18,27 +18,23 @@
 </head>
 <body>
   <div id="loadingOverlay" class="loading-overlay hidden-soft"><div class="loading-card"><img src="logo.png" alt="Logo"><div class="loading-text">Carregando…</div></div></div>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo"><img src="assets/logo.svg" alt="Logo"></div>
-      <div class="titles">
-        <strong>Anoig App</strong>
-        <span id="dashRoleLabel">Painel do Assinante</span>
-      </div>
-      <div id="brandUserWrap" style="display:flex; align-items:center; gap:8px; margin-left:12px;">
-        <div id="brandUserAvatar" class="avatar-user" style="width:32px;height:32px;"><span style="font-size:.9em">+</span></div>
-        <span id="brandUserName" class="muted"></span>
+  <header class="topbar topnav-large">
+    <div class="topnav-inner">
+      <div class="topnav-left"><img class="brand-mark" src="assets/logo-256.png" alt="Logo"></div>
+      <nav class="tabs topnav-menu">
+        <a href="#criar" class="tab topnav-item"><span>Criar</span><span>&nbsp;</span></a>
+        <a href="#projetos" class="tab topnav-item"><span>Meus</span><span>Projetos</span></a>
+        <a href="#modelos" class="tab topnav-item"><span>Modelos</span><span>Prontos</span></a>
+        <a href="#dados" class="tab topnav-item"><span>Meus</span><span>Dados</span></a>
+        <a href="#pagamentos" class="tab topnav-item"><span>Meus</span><span>Pagamentos</span></a>
+        <a href="#admin" class="tab topnav-item admin-only hidden-soft"><span>Admin</span><span>&nbsp;</span></a>
+      </nav>
+      <div class="topnav-right">
+        <div id="brandUserAvatar" class="avatar-user small"><span style="font-size:.9em">+</span></div>
       </div>
     </div>
     <!-- Login removido do cabeçalho: acesso via login.html -->
-    <nav class="tabs">
-      <a href="#criar" class="tab">Criar</a>
-      <a href="#projetos" class="tab">Meus Projetos</a>
-      <a href="#modelos" class="tab">Modelos Prontos</a>
-      <a href="#dados" class="tab">Meus Dados</a>
-      <a href="#pagamentos" class="tab">Meus Pagamentos</a>
-      <a href="#admin" class="tab admin-only hidden-soft">Admin</a>
-    </nav>
+    
   </header>
 
   <main id="view">
