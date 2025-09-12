@@ -745,7 +745,8 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   try { bindHeaderUI(); refreshHeader(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindHeaderUI'); }
   try { bindButtonsUI(); refreshButtonsUI(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindButtonsUI'); }
   
-  try { bindAccountPrefs(); }\n  try { initLayerTabs(); } catch(e){} catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
+  try { bindAccountPrefs(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
+  try { initLayerTabs(); } catch(e){}
 
   // Vitrine da aba Modelos (se existir)
   qsa('.model-card button').forEach(btn=>{
