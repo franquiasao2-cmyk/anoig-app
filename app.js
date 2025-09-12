@@ -799,11 +799,11 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const outBtn = qs('#menuSignOut');
     if(av && menu){
       const userArea = av.closest('.user-area') || document.body;
-      av.addEventListener('click', (e)=>{ e.stopPropagation(); userArea.classList.toggle('open'); menu.classList.toggle('hidden-soft', !userArea.classList.contains('open')); });
-      document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) { userArea.classList.remove('open'); menu.classList.add('hidden-soft'); } });
+      av.addEventListener('click', (e)=>{ e.stopPropagation(); userArea.classList.toggle('open'); });
+      document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) { userArea.classList.remove('open'); } });
       // Fechar menu ao clicar em qualquer item
       qsa('#userMenu .menu-item').forEach(it=>{
-        it.addEventListener('click', ()=>{ userArea.classList.remove('open'); menu.classList.add('hidden-soft'); });
+        it.addEventListener('click', ()=>{ userArea.classList.remove('open'); });
       });
     }
     if(outBtn){ outBtn.addEventListener('click', handleSignOut); }
@@ -816,12 +816,12 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const outBtn2 = qs('#menuSignOut');
     if(av2 && menu2 && !av2.__bound){
       const userArea2 = av2.closest('.user-area') || document.body;
-      av2.addEventListener('click', (e)=>{ e.stopPropagation(); userArea2.classList.toggle('open'); menu2.classList.toggle('hidden-soft', !userArea2.classList.contains('open')); });
-      document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) { userArea2.classList.remove('open'); menu2.classList.add('hidden-soft'); } });
+      av2.addEventListener('click', (e)=>{ e.stopPropagation(); userArea2.classList.toggle('open'); });
+      document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) { userArea2.classList.remove('open'); } });
       av2.__bound=true;
       // Fechar menu ao clicar em qualquer item
       qsa('#userMenu .menu-item').forEach(it=>{
-        it.addEventListener('click', ()=>{ userArea2.classList.remove('open'); menu2.classList.add('hidden-soft'); });
+        it.addEventListener('click', ()=>{ userArea2.classList.remove('open'); });
       });
     }
     if(outBtn2 && !outBtn2.__bound){ outBtn2.addEventListener('click', handleSignOut); outBtn2.__bound=true; }

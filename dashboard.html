@@ -32,7 +32,7 @@
         <a href="#dados" class="tab topnav-item"><span>Meus</span><span>Dados</span></a>
         <a href="#admin" class="tab topnav-item admin-only hidden-soft"><span>Administração</span><span>&nbsp;</span></a>
       </nav>
-      <div class="topnav-right"><div class="user-area"><div id="brandUserAvatar" class="avatar-user small clickable"><span style="font-size:.9em">+</span></div><div id="userMenu" class="user-menu hidden-soft"><a href="#dados" class="menu-item">Meus dados</a><a href="#criar" class="menu-item">Criar</a><a href="#pagamentos" class="menu-item">Pagamentos</a><button id="menuUniversidade" class="menu-item" type="button">Universidade</button><button id="menuSignOut" class="menu-item danger">Sair</button></div></div></div>
+      <div class="topnav-right"><div class="user-area"><div id="brandUserAvatar" class="avatar-user small clickable"><span style="font-size:.9em">+</span></div><div id="userMenu" class="user-menu"><a href="#dados" class="menu-item">Meus dados</a><a href="#criar" class="menu-item">Criar</a><a href="#pagamentos" class="menu-item">Pagamentos</a><button id="menuUniversidade" class="menu-item" type="button">Universidade</button><button id="menuSignOut" class="menu-item danger">Sair</button></div></div></div>
     </div>
     <!-- Login removido do cabeçalho: acesso via login.html -->
     
@@ -249,7 +249,8 @@
         <div class="profile-row">
           <div id="userAvatarPreview" class="avatar-user"><span>+</span></div>
           <div>
-            <input id="userAvatarFile" type="file" accept="image/*">
+            <label for="userAvatarFile" class="sr-only">Foto de perfil</label>
+<input id="userAvatarFile" type="file" accept="image/*">
             <small class="muted">Atualize sua foto de perfil</small>
           </div>
         </div>
