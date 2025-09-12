@@ -324,14 +324,13 @@ function refreshHeader(){
 
   // Placeholder (pré-visualização inicial)
   try{
-    const ph = qs('#phonePlaceholder');
-    if(ph){
+    const ph = qs('#phonePlaceholder'); const hdr=qs('#phoneHeader'); const body=qs('#pvButtons'); if(ph){
       const emptyTitle = !(state.header.title||'').trim();
       const emptySub = !(state.header.subtitle||'').trim();
       const noLogo = !state.header.logoDataUrl;
       const noButtons = !(state.buttons && state.buttons.length);
       const showPH = emptyTitle && emptySub && noLogo && noButtons;
-      ph.classList.toggle('hidden-soft', !showPH);
+      ph.classList.toggle('hidden-soft', !showPH); if(hdr) hdr.classList.toggle('hidden-soft', showPH); if(body) body.classList.toggle('hidden-soft', showPH);
     }
   }catch(_){ }
 
@@ -1041,6 +1040,7 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
 
 
 
