@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -65,7 +65,7 @@
       const loginId = document.getElementById('inEmail').value.trim();
       const pass  = document.getElementById('inPass').value;
       const out = document.getElementById('msg'); out.textContent='';
-      if(!supa){ out.textContent='SDK indisponível'; return; }
+      if(!supa){ out.textContent='SDK\ indisponível'; return; }
       let email = loginId;
       try{
         if(loginId && loginId.indexOf('@') === -1){
@@ -110,7 +110,7 @@
       try{
         await supa.auth.resend({ type:'signup', email });
         const out = document.getElementById('msg'); if(out) out.textContent = 'Reenviamos o e-mail de confirmação. Verifique sua caixa de entrada e spam.';
-      }catch(_){ const out = document.getElementById('msg'); if(out) out.textContent='Não foi possível reenviar agora.'; }
+      }catch(_){ const out = document.getElementById('msg'); if(out) out.textContent='não foi possível reenviar agora.'; }
     }
     function showVerifyBlock(email){
       const box = document.getElementById('verifyWrap');
@@ -124,9 +124,9 @@
       e.preventDefault();
       const email = document.getElementById('fpEmail').value.trim();
       const out = document.getElementById('msg'); out.textContent='';
-      if(!supa){ out.textContent='SDK indisponível'; return; }
+      if(!supa){ out.textContent='SDK\ indisponível'; return; }
       const { error } = await supa.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset.html' });
-      if(error){ out.textContent = error.message || 'Não foi possível enviar e-mail.'; return; }
+      if(error){ out.textContent = error.message || 'não foi possível enviar e-mail.'; return; }
       out.textContent = 'Enviamos um e-mail com instruções para redefinir a senha.';
     }
     function goSignup(){ location.href = 'signup.html'; }
@@ -157,14 +157,14 @@
   <div class="auth-card">
     <div class="logo-top"><div class="logo-box"><img src="assets/logo-transparent.png" alt="Logo" loading="eager"></div></div>
     <form id="loginForm" class="form">
-      <label for="inEmail">E-mail ou usuário</label>
+      <label for="inEmail">E-mail ou Usuário</label>
       <div class="input-wrap">
-        <input id="inEmail" type="text" placeholder="informe seu e-mail ou usuário" required>
+        <input id="inEmail" type="text" placeholder="informe seu e-mail ou Usuário" required>
       </div>
       <label for="inPass">Senha</label>
       <div class="input-wrap">
         <input id="inPass" type="password" placeholder="Senha" required>
-        <button class="toggle-pass" type="button" id="togglePass" aria-label="Mostrar/ocultar senha">👁️</button>
+        <button class="toggle-pass" type="button" id="togglePass" aria-label="Mostrar/ocultar senha">ðŸ‘ï¸</button>
       </div>
       <div class="links-row">
         <div class="left"><a href="#" id="goSignup">Criar minha conta</a></div>

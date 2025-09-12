@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>PÃ¡gina PÃºblica</title>
+  <title>Página\ Pública</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
@@ -22,8 +22,8 @@
       <div id="pubHeader" class="phone-header">
         <div class="avatar">+</div>
         <div class="texts">
-          <div id="pubTitle" class="pv-title">TÃ­tulo</div>
-          <div id="pubSubtitle" class="pv-subtitle">SubtÃ­tulo</div>
+          <div id="pubTitle" class="pv-title">Título</div>
+          <div id="pubSubtitle" class="pv-subtitle">SubTítulo</div>
         </div>
       </div>
       <div id="pubButtons" class="phone-body"></div>
@@ -36,20 +36,20 @@
       const warn = document.getElementById('warn');
       if(!slug){
         warn.style.display='block';
-        warn.textContent = 'Link invÃ¡lido. Falta o slug na URL (#slug).';
+        warn.textContent = 'Link inválido. Falta o slug na URL (#slug).';
         return;
       }
       const KEY = 'anoig-public-' + slug;
       const raw = localStorage.getItem(KEY);
       if(!raw){
         warn.style.display='block';
-        warn.textContent = 'PÃ¡gina nÃ£o encontrada neste navegador. (No MVP real, os dados vÃªm do servidor.)';
+        warn.textContent = 'Página não encontrada neste navegador. (No MVP real, os dados vêm do servidor.)';
         return;
       }
       try{
         const data = JSON.parse(raw);
         // header
-        document.getElementById('pubTitle').textContent = data.header?.title || 'TÃ­tulo';
+        document.getElementById('pubTitle').textContent = data.header?.title || 'Título';
         document.getElementById('pubSubtitle').textContent = data.header?.subtitle || '';
         const header = document.getElementById('pubHeader');
         const h = data.header || {};
@@ -82,7 +82,7 @@
           a.innerHTML = `
             <div class="card-inner">
               <div class="card-icon" style="background:${b.color || '#2b7a78'}"></div>
-              <div class="card-label">${b.label || 'BotÃ£o'}</div>
+              <div class="card-label">${b.label || 'Botão'}</div>
             </div>`;
           wrap.appendChild(a);
         });

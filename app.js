@@ -16,7 +16,7 @@ const ADMIN_USERNAMES = [
 var IS_ADMIN = false;
 
 if (typeof supabase === "undefined") {
-  console.error("Supabase SDK nÃ£o carregou. Confira a <script src='@supabase/supabase-js@2'> no index.html");
+  console.error("Supabase SDK não carregou. Confira a <script src='@supabase/supabase-js@2'> no index.html");
 }
 let supa = typeof supabase !== "undefined" ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 
@@ -115,11 +115,11 @@ var presetModels = {
   ],
   servicos: [
     { label:'Agendar consulta', link:'https://agenda.com', color:'#3b82f6', textColor:'#ffffff', size:'md', radius:14, shadow:true },
-    { label:'OrÃ§amento', link:'https://formulario.com', color:'#9333ea', textColor:'#ffffff', size:'md', radius:14, shadow:false }
+    { label:'Orçamento', link:'https://formulario.com', color:'#9333ea', textColor:'#ffffff', size:'md', radius:14, shadow:false }
   ],
   restaurante: [
-    { label:'CardÃ¡pio', link:'https://menu.delivery', color:'#ef4444', textColor:'#ffffff', size:'lg', radius:18, shadow:true },
-    { label:'PeÃ§a no iFood', link:'https://ifood.com', color:'#f97316', textColor:'#111827', size:'md', radius:16, shadow:true }
+    { label:'Cardápio', link:'https://menu.delivery', color:'#ef4444', textColor:'#ffffff', size:'lg', radius:18, shadow:true },
+    { label:'Peça no iFood', link:'https://ifood.com', color:'#f97316', textColor:'#111827', size:'md', radius:16, shadow:true }
   ]
 };
 
@@ -179,7 +179,7 @@ function setAuthUI(user){
   if(saveBtn) saveBtn.disabled=!signed;
   if(pubBtn)  pubBtn.disabled=!signed || (assinaturaStatus!=='ativa');
   if(hint){
-    if(!signed) hint.textContent='FaÃ§a login para salvar e publicar.';
+    if(!signed) hint.textContent='Faça login para salvar e publicar.';
     else if(assinaturaStatus!=='ativa') hint.textContent='Assinatura inativa.';
     else hint.textContent='';
   }
@@ -346,7 +346,7 @@ function refreshHeader(){
   }
 }
 
-/* ---------- BotÃµes (Etapa 2) ---------- */
+/* ---------- Botões (Etapa 2) ---------- */
 function bindButtonsUI(){
   __devlog && __devlog('bindButtonsUI');
   const optCreateNew=qs('#optCreateNew');
@@ -394,7 +394,7 @@ function bindButtonsUI(){
 
   addBtn && addBtn.addEventListener('click', ()=>{
     const b = {
-      label: (btnText?.value||'Novo botÃ£o'),
+      label: (btnText?.value||'Novo Botão'),
       link: (btnLink?.value||'https://'),
       color: (btnColor?.value||'#2b7a78'),
       textColor: (btnTextColor?.value||'#ffffff'),
@@ -410,7 +410,7 @@ function bindButtonsUI(){
   applyBtn && applyBtn.addEventListener('click', ()=>{
     if(state.selectedIndex<0 || !state.buttons[state.selectedIndex]) return;
     const b=state.buttons[state.selectedIndex];
-    b.label = btnText?.value||'BotÃ£o';
+    b.label = btnText?.value||'Botão';
     b.link  = btnLink?.value||'https://';
     b.color = btnColor?.value||'#2b7a78';
     b.textColor = btnTextColor?.value||'#ffffff';
@@ -502,7 +502,7 @@ function enableDragSort(list){
   list.addEventListener('drop', function(){ var items=Array.prototype.slice.call(list.querySelectorAll('li')); var newOrder=items.map(li=>state.buttons[Number(li.getAttribute('data-index'))]); state.buttons=newOrder; state.selectedIndex=-1; refreshButtonsUI(); });
 }
 
-/* ---------- Identidade & PublicaÃ§Ã£o (Etapa 3) ---------- */
+/* ---------- Identidade & Publicação (Etapa 3) ---------- */
 function bindIdentity(){
   __devlog && __devlog('bindIdentity');
   const pageSlug=qs('#pageSlug');
@@ -516,12 +516,12 @@ function bindIdentity(){
 
 function validateDraft(){
   var errs=[];
-  if(!state.header.title||state.header.title.replace(/\s+/g,'').length<2) errs.push('TÃ­tulo obrigatÃ³rio.');
-  if(!Array.isArray(state.buttons)||state.buttons.length===0) errs.push('Crie ao menos 1 botÃ£o.');
-  if(!state.slug||state.slug.length<2) errs.push('Escolha o link (slug) invÃ¡lido.');
+  if(!state.header.title||state.header.title.replace(/\s+/g,'').length<2) errs.push('Título obrigatório.');
+  if(!Array.isArray(state.buttons)||state.buttons.length===0) errs.push('Crie ao menos 1 Botão.');
+  if(!state.slug||state.slug.length<2) errs.push('Escolha o link (slug) inválido.');
   state.buttons.forEach(function(b,i){
-    if(!b.label||!b.link) errs.push('BotÃ£o '+(i+1)+': texto e link sÃ£o obrigatÃ³rios.');
-    if(b.link&&!/^https?:\/\//i.test(b.link)) errs.push('BotÃ£o '+(i+1)+': link deve comeÃ§ar com http(s)://');
+    if(!b.label||!b.link) errs.push('Botão '+(i+1)+': texto e link são obrigatórios.');
+    if(b.link&&!/^https?:\/\//i.test(b.link)) errs.push('Botão '+(i+1)+': link deve começar com http(s)://');
   });
   if(errs.length){ alert('Antes de salvar/publicar:\n\n- '+errs.join('\n- ')); return false; }
   return true;
@@ -558,7 +558,7 @@ function savePublicToLocal(){
 }
 async function saveToDatabase(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para salvar.'); return; }
-  if(!supa){ alert('Supabase indisponÃ­vel'); return; }
+  if(!supa){ alert('Supabase\ indisponível'); return; }
   if(!validateDraft()) return;
 
   __devlog && __devlog('db: salvar rascunho');
@@ -576,15 +576,15 @@ async function saveToDatabase(){
   };
 
   let { data: ex, error: selErr } = await supa.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).limit(1);
-  if(selErr){ console.error(selErr); alert('Erro lendo pÃ¡gina: '+selErr.message); return; }
+  if(selErr){ console.error(selErr); alert('Erro lendo Página: '+selErr.message); return; }
   let pageId=null;
   if(ex && ex.length){
     pageId=ex[0].id;
     const { error: upErr } = await supa.from('pages').update(base).eq('id',pageId).eq('owner_id',user.id);
-    if(upErr){ console.error(upErr); alert('Erro atualizando pÃ¡gina: '+upErr.message); return; }
+    if(upErr){ console.error(upErr); alert('Erro atualizando Página: '+upErr.message); return; }
   } else {
     const { data: ins, error: insErr } = await supa.from('pages').insert(base).select('id').single();
-    if(insErr){ console.error(insErr); alert('Erro criando pÃ¡gina: '+insErr.message); return; }
+    if(insErr){ console.error(insErr); alert('Erro criando Página: '+insErr.message); return; }
     pageId=ins.id;
   }
 
@@ -606,7 +606,7 @@ async function saveToDatabase(){
     svg_text_color: null
   }));
   const { error: btnErr } = await supa.from('buttons').insert(payload);
-  if(btnErr){ console.error(btnErr); alert('Erro salvando botÃµes: '+btnErr.message); return; }
+  if(btnErr){ console.error(btnErr); alert('Erro salvando Botões: '+btnErr.message); return; }
 
   alert('Rascunho salvo no banco!');
 }
@@ -615,18 +615,18 @@ async function publishPage(){
   const user=await getCurrentUser(); if(!user){ alert('Entre na conta para publicar.'); return; }
   if(!(user.email_confirmed_at||user.confirmed_at)){ alert('Confirme seu e-mail antes de publicar.'); return; }
   if(assinaturaStatus!=='ativa'){ alert('Assinatura inativa.'); return; }
-  if(!supa){ alert('Supabase indisponÃ­vel'); return; }
+  if(!supa){ alert('Supabase\ indisponível'); return; }
   if(!validateDraft()) return;
 
   __devlog && __devlog('db: publicar');
 
   await saveToDatabase();
   const { data: pg, error: selErr } = await supa.from('pages').select('id').eq('owner_id',user.id).eq('slug',state.slug).single();
-  if(selErr){ console.error(selErr); alert('Erro localizando pÃ¡gina: '+selErr.message); return; }
+  if(selErr){ console.error(selErr); alert('Erro localizando Página: '+selErr.message); return; }
   const { error: pubErr } = await supa.from('pages').update({ is_published:true, published_at:new Date().toISOString(), updated_at:new Date().toISOString() }).eq('id',pg.id).eq('owner_id',user.id);
   if(pubErr){ console.error(pubErr); alert('Erro ao publicar: '+pubErr.message); return; }
   try{ savePublicToLocal(); }catch(_){ }
-  alert('PÃ¡gina publicada!');
+  alert('Página publicada!');
 }
 
 function copyPublicLink(){
@@ -683,7 +683,7 @@ function renderProjects(pages){
     const pubInfo = p.is_published ? `â€¢ publicado em ${fmtDate(p.published_at)}` : '';
     card.innerHTML = `
       <div class="proj-top">
-        <div class="proj-title">${escapeHtml(p.title||'(sem tÃ­tulo)')}</div>
+        <div class="proj-title">${escapeHtml(p.title||'(sem Título)')}</div>
         ${badge}
       </div>
       <div class="small-muted">Slug: <code>${escapeHtml(p.slug)}</code> â€¢ atualizado em ${fmtDate(p.updated_at||p.created_at)} ${pubInfo}</div>
@@ -711,7 +711,7 @@ function renderProjects(pages){
 }
 async function initProjectsView(forceRefresh){
   const user=await getCurrentUser();
-  if(!user){ alert('FaÃ§a login para ver seus projetos.'); return; }
+  if(!user){ alert('Faça login para ver seus projetos.'); return; }
   if(forceRefresh || !_projectsCache.length){ _projectsCache = await fetchMyPages(); }
   populateMonthFilter(_projectsCache);
   renderProjects(_projectsCache);
@@ -798,8 +798,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const menu = qs('#userMenu');
     const outBtn = qs('#menuSignOut');
     if(av && menu){
-      av.addEventListener('click', (e)=>{ e.stopPropagation(); menu.classList.toggle('hidden-soft'); });
-      document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) menu.classList.add('hidden-soft'); });
+      const userArea = av.closest('.user-area') || document.body;
+      av.addEventListener('click', (e)=>{ e.stopPropagation(); userArea.classList.toggle('open'); menu.classList.toggle('hidden-soft', !userArea.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) { userArea.classList.remove('open'); menu.classList.add('hidden-soft'); } });
     }
     if(outBtn){ outBtn.addEventListener('click', handleSignOut); }
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
@@ -810,8 +811,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const menu2 = qs('#userMenu');
     const outBtn2 = qs('#menuSignOut');
     if(av2 && menu2 && !av2.__bound){
-      av2.addEventListener('click', (e)=>{ e.stopPropagation(); menu2.classList.toggle('hidden-soft'); });
-      document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) menu2.classList.add('hidden-soft'); });
+      const userArea2 = av2.closest('.user-area') || document.body;
+      av2.addEventListener('click', (e)=>{ e.stopPropagation(); userArea2.classList.toggle('open'); menu2.classList.toggle('hidden-soft', !userArea2.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) { userArea2.classList.remove('open'); menu2.classList.add('hidden-soft'); } });
       av2.__bound=true;
     }
     if(outBtn2 && !outBtn2.__bound){ outBtn2.addEventListener('click', handleSignOut); outBtn2.__bound=true; }
@@ -997,13 +999,13 @@ function bindAccountPrefs(){
               // verifica se ja existe outro dono para esse username
               const { data: exists, error: qErr } = await supa.from('profiles').select('id').eq('username', uname).limit(1);
               if(qErr && String(qErr.code||'')!=='42P01'){ throw qErr; }
-              if(exists && exists.length && exists[0].id !== uid){ alert('Nome de usu90rio indispon90vel.'); return; }
+              if(exists && exists.length && exists[0].id !== uid){ alert('Nome de usuário indisponível.'); return; }
             }
             const payload = { id: uid, username: (uname||null), email: emailNow||null, full_name };
             const { error: upErr } = await supa.from('profiles').upsert(payload, { onConflict: 'id' });
             if(upErr && String(upErr.code||'')!=='42P01'){ throw upErr; }
           }
-        }catch(e){ console.error('profiles upsert falhou', e); /* ignora se tabela n3o existir */ }
+        }catch(e){ console.error('profiles upsert falhou', e); /* ignora se tabela não existir */ }
         alert('Preferências salvas.');
       }catch(e){ console.error(e); alert('Falha ao salvar preferências.'); }
     });

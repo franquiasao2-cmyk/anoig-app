@@ -1,4 +1,4 @@
-﻿/* RESET BÃSICO */
+﻿/* RESET BÁSICO */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { font-family: sans-serif; height: 100%; background: var(--bg); color: var(--text); }
 a { text-decoration: none; }
@@ -78,6 +78,7 @@ a { text-decoration: none; }
 /* User area on the right */
 .user-area { position: relative; }
 .topnav-right .user-menu { left: auto; right: 0; top: 56px; }
+.user-area.open .user-menu { display:block !important; }
 
 @media (max-width: 768px) {
   .topnav-inner { gap: 12px; }
@@ -90,7 +91,7 @@ a { text-decoration: none; }
 main { padding: 16px; }
 .screen.hidden { display: none; }
 
-/* FORM BÃSICO */
+/* FORM BÁSICO */
 label { display: block; margin-bottom: 8px; }
 input, select, button {
   font: inherit;
@@ -128,7 +129,7 @@ input[type=color] { padding: 0; height: 36px; }
 .panel-group { margin-bottom: 16px; }
 .panel-group h3 { font-size: 0.9em; margin-bottom: 8px; color: var(--muted); }
 
-/* LISTA DE BOTÃ•ES */
+/* LISTA DE BOTÕES */
 .list { list-style: none; margin: 8px 0; padding: 0; }
 .list li {
   background: var(--surface);
@@ -174,7 +175,7 @@ input[type=color] { padding: 0; height: 36px; }
 .phone-header > * { position: relative; z-index: 1; }
 .hdr-layer { position: absolute; inset: 0; z-index: 0; background: transparent; background-size: cover; background-position: center; background-repeat: no-repeat; pointer-events: none; }
 
-/* BOTÃ•ES VISUAIS */
+/* BOTÕES VISUAIS */
 .card-btn {
   display: block;
   border-radius: 24px;
@@ -215,7 +216,7 @@ input[type=color] { padding: 0; height: 36px; }
 .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .muted { color: var(--muted); font-size: 0.85em; }
 
-/* RODAPÃ‰ */
+/* RODAPÉ */
 .foot { text-align: center; padding: 12px; color: var(--muted); font-size: 0.8em; }
 
 /* AVISOS */

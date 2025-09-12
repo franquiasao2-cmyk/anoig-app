@@ -17,10 +17,10 @@
     const supa = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
     async function init(){
       const msg = document.getElementById('msg');
-      if(!supa){ msg.textContent='SDK indisponÃ­vel'; return; }
+      if(!supa){ msg.textContent='SDK\ indisponível'; return; }
       try { await supa.auth.exchangeCodeForSession(window.location.href); } catch(_) {}
       const { data: { user } } = await supa.auth.getUser();
-      if(!user){ msg.textContent = 'Link invÃ¡lido ou expirado. Solicite novamente.'; document.getElementById('form').style.display='none'; return; }
+      if(!user){ msg.textContent = 'Link inválido ou expirado. Solicite novamente.'; document.getElementById('form').style.display='none'; return; }
     }
     async function doUpdate(e){
       e.preventDefault();
@@ -28,10 +28,10 @@
       const p2 = document.getElementById('np2').value;
       const msg = document.getElementById('msg'); msg.textContent='';
       if(p1.length < 6){ msg.textContent='A senha deve ter ao menos 6 caracteres.'; return; }
-      if(p1 !== p2){ msg.textContent='As senhas nÃ£o conferem.'; return; }
+      if(p1 !== p2){ msg.textContent='As senhas não conferem.'; return; }
       const { error } = await supa.auth.updateUser({ password: p1 });
       if(error){ msg.textContent = error.message || 'Falha ao atualizar senha.'; return; }
-      msg.textContent = 'Senha atualizada. VocÃª jÃ¡ pode entrar.';
+      msg.textContent = 'Senha atualizada. Você já pode entrar.';
       setTimeout(()=> location.href='login.html', 800);
     }
     document.addEventListener('DOMContentLoaded', ()=>{
