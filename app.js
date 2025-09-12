@@ -1,4 +1,5 @@
 ﻿/* ===== Boot ===== */
+var __devlog = (typeof window !== 'undefined' && window.__devlog) ? window.__devlog : function(){};
 __devlog && __devlog('boot: iniciando app.js');
 
 const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
