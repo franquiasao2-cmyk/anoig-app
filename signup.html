@@ -46,6 +46,56 @@
       document.getElementById('backLogin').addEventListener('click', backLogin);
     });
   </script>
+  <script>
+    // Override doSignup para aceitar username e validar disponibilidade
+    (function(){
+      const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
+      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
+      const supa2 = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+      function sanitizeUsername(s){
+        s = String(s||'').trim().toLowerCase();
+        try{ if(s.normalize) s = s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch(_){ }
+        return s.replace(/[^a-z0-9._-]/g, '');
+      }
+      const orig = window.doSignup;
+      window.doSignup = async function(e){
+        e.preventDefault();
+        const msg = document.getElementById('msg'); if(msg) msg.textContent='';
+        try{
+          const fullName = document.getElementById('sgName').value.trim();
+          let username = document.getElementById('sgUsername').value.trim();
+          const email    = document.getElementById('sgEmail').value.trim();
+          const whatsapp = document.getElementById('sgWhatsapp').value.trim();
+          const address  = document.getElementById('sgAddress').value.trim();
+          const pass     = document.getElementById('sgPass').value;
+          const pass2    = document.getElementById('sgPass2').value;
+          if(pass !== pass2){ msg.textContent='As senhas não conferem.'; return; }
+          if(!supa2){ msg.textContent='SDK indisponível'; return; }
+          username = sanitizeUsername(username);
+          if(!username){ msg.textContent='Informe um nome de usuário válido (letras/números/._-).'; return; }
+          try{
+            const { data: exists, error: qErr } = await supa2.from('profiles').select('id').eq('username', username).limit(1);
+            if(qErr){ /* tabela pode não existir ainda; ignora */ }
+            if(exists && exists.length){ msg.textContent='Nome de usuário indisponível.'; return; }
+          }catch(_){ }
+          const { error } = await supa2.auth.signUp({
+            email,
+            password: pass,
+            options: {
+              data: { full_name: fullName, whatsapp, address, username },
+              emailRedirectTo: location.origin + '/index.html'
+            }
+          });
+          if(error){ msg.textContent = error.message || 'Falha ao criar conta.'; return; }
+          msg.textContent = 'Cadastro iniciado. Verifique seu e-mail para confirmar a conta. Dica: no primeiro acesso, entre com seu e-mail; depois, o login por usuário ficará disponível.';
+        }catch(err){ console.error(err); if(msg) msg.textContent='Falha ao criar conta.'; }
+      };
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const u = document.getElementById('sgUsername');
+        if(u){ u.addEventListener('input', (e)=>{ e.target.value = sanitizeUsername(e.target.value); }); }
+      });
+    })();
+  </script>
   <link rel="icon" href="data:,">
   <style>:root { color-scheme: light dark; }</style>
 </head>
@@ -62,6 +112,9 @@
     <form id="signupForm" class="form">
       <label>Nome completo
         <input id="sgName" type="text" placeholder="Seu nome" required>
+      </label>
+      <label>Nome de usuário
+        <input id="sgUsername" type="text" placeholder="letras, números, . _ -" required>
       </label>
       <label>E-mail
         <input id="sgEmail" type="email" placeholder="seuemail@exemplo.com" required>

@@ -21,7 +21,7 @@
       <div class="logo">A</div>
       <div class="titles">
         <strong>Anoig App</strong>
-        <span>Painel do Assinante</span>
+        <span id="dashRoleLabel">Painel do Assinante</span>
       </div>
       <div id="brandUserWrap" style="display:flex; align-items:center; gap:8px; margin-left:12px;">
         <div id="brandUserAvatar" class="avatar-user" style="width:32px;height:32px;"><span style="font-size:.9em">+</span></div>
@@ -35,6 +35,7 @@
       <a href="#modelos" class="tab">Modelos Prontos</a>
       <a href="#dados" class="tab">Meus Dados</a>
       <a href="#pagamentos" class="tab">Meus Pagamentos</a>
+      <a href="#admin" class="tab admin-only hidden-soft">Admin</a>
     </nav>
   </header>
 
@@ -250,6 +251,9 @@
         <label>Nome completo
           <input id="meuNome" type="text" placeholder="Seu nome">
         </label>
+        <label>Nome de usuário (username)
+          <input id="meuUsername" type="text" placeholder="ex.: admin">
+        </label>
         <label>E-mail
           <input id="meuEmail" type="email" placeholder="seuemail@exemplo.com" disabled>
         </label>
@@ -311,6 +315,19 @@
           </ul>
           <button class="btn">Assinar mensal</button>
         </div>
+      </div>
+    </section>
+    <!-- ADMIN -->
+    <section id="view-admin" class="screen hidden admin-only">
+      <h2>Administração</h2>
+      <div class="card">
+        <p>Opções administrativas disponíveis apenas para administradores.</p>
+        <ul>
+          <li>Gerenciar usuários (em breve)</li>
+          <li>Relatórios e métricas (em breve)</li>
+          <li>Modelos globais (em breve)</li>
+        </ul>
+        <small class="muted">Se você não deveria ver isto, saia e entre com uma conta de assinante.</small>
       </div>
     </section>
   </main>

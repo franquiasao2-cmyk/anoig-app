@@ -3,6 +3,16 @@ __devlog && __devlog('boot: iniciando app.js');
 
 const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
+// E-mails autorizados como administradores (altere conforme necessário)
+const ADMIN_EMAILS = [
+  'admin@anoig.com'
+];
+// Usernames autorizados como administradores (altere conforme necessário)
+const ADMIN_USERNAMES = [
+  'admin'
+];
+// Estado de admin em memória
+var IS_ADMIN = false;
 
 if (typeof supabase === "undefined") {
   console.error("Supabase SDK nÃ£o carregou. Confira a <script src='@supabase/supabase-js@2'> no index.html");
@@ -37,6 +47,19 @@ function escapeHtml(s){
   const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
   return String(s || '').replace(/[&<>"']/g, ch => map[ch]);
 }
+// Determina se o usuário é admin (por metadados ou allowlist)
+function computeIsAdmin(user){
+  try{
+    const norm = (s)=> String(s||'').trim().toLowerCase();
+    const email = norm(user && user.email || '');
+    const meta = (user && user.user_metadata) || {};
+    const uname = norm(meta.username || meta.user_name || meta.preferred_username || meta.nickname || (email.split('@')[0] || ''));
+    if(meta && (meta.role === 'admin' || meta.is_admin === true)) return true;
+    if(email && ADMIN_EMAILS.indexOf(email) !== -1) return true;
+    if(uname && ADMIN_USERNAMES.indexOf(uname) !== -1) return true;
+  }catch(_){ }
+  return false;
+}
 // Loading overlay helpers (expects #loadingOverlay in DOM)
 function showLoading(){ var el=qs('#loadingOverlay'); if(el) el.classList.remove('hidden-soft'); }
 function hideLoading(){ var el=qs('#loadingOverlay'); if(el) el.classList.add('hidden-soft'); }
@@ -44,6 +67,12 @@ function sanitizeSlug (s){
   s=(s||'').toLowerCase();
   if(s.normalize) s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   s=s.replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  return s;
+}
+function sanitizeUsername (s){
+  s=(s||'').toLowerCase().trim();
+  try{ if(s.normalize) s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch(_){ }
+  s=s.replace(/[^a-z0-9._-]/g,'');
   return s;
 }
 
@@ -60,7 +89,10 @@ function initTheme(){
 }
 
 function setScreenFromHash(){
-  var hash=(location.hash||'').replace('#','')||'criar';
+  var raw=(location.hash||'').replace('#','');
+  var hash = raw || 'criar';
+  // Impede acesso à tela admin se não for admin
+  if(hash==='admin' && !IS_ADMIN){ hash='criar'; try{ if(location.hash!== '#criar') location.hash='#criar'; }catch(_){ } }
   __devlog && __devlog('nav:', hash);
   qsa('.screen').forEach(s=>s.classList.add('hidden'));
   var el=qs('#view-'+hash); if(el) el.classList.remove('hidden');
@@ -92,6 +124,29 @@ async function getCurrentUser(){
   if(!supa) return null;
   const { data:{ user } = { user:null } } = await supa.auth.getUser();
   return user||null;
+}
+
+// Garante linha em public.profiles a partir do user_metadata (username, nome, email)
+async function ensureProfileFromMetadata(user){
+  try{
+    if(!supa || !user) return;
+    const meta = (user.user_metadata)||{};
+    const full_name = (meta.full_name||'').trim();
+    const email = user.email || '';
+    const uname = sanitizeUsername(meta.username || meta.user_name || meta.preferred_username || '');
+    // verifica se já existe nosso profile
+    const { data: me, error: meErr } = await supa.from('profiles').select('id, username').eq('id', user.id).limit(1);
+    if(meErr && String(meErr.code||'')!=='42P01'){ return; }
+    let usernameToSet = uname || (me && me[0] && me[0].username) || null;
+    // se vamos definir username, garantir que não está tomado por outro
+    if(usernameToSet){
+      const { data: exists, error: exErr } = await supa.from('profiles').select('id').eq('username', usernameToSet).limit(1);
+      if(!exErr && exists && exists.length && exists[0].id !== user.id){ usernameToSet = me && me[0] ? (me[0].username||null) : null; }
+    }
+    const payload = { id: user.id, username: usernameToSet, email: email||null, full_name: full_name||null };
+    const { error: upErr } = await supa.from('profiles').upsert(payload, { onConflict: 'id' });
+    if(upErr && String(upErr.code||'')!=='42P01'){ /* silencioso */ }
+  }catch(e){ /* silencioso */ }
 }
 
 function setAuthUI(user){
@@ -135,6 +190,7 @@ function setAuthUI(user){
   // Preenche campos do perfil (Meus Dados)
   const meta = (user && user.user_metadata) || {};
   const meuNome=qs('#meuNome'); if(meuNome) meuNome.value = meta.full_name || '';
+  const meuUser=qs('#meuUsername'); if(meuUser) meuUser.value = meta.username || meta.user_name || meta.preferred_username || '';
   const meuWhats=qs('#meuWhatsapp'); if(meuWhats) meuWhats.value = meta.whatsapp || '';
   const meuEnd=qs('#meuEndereco'); if(meuEnd) meuEnd.value = meta.address || '';
   // Avatar e nome no header
@@ -150,6 +206,13 @@ function setAuthUI(user){
   if(planLine){ planLine.classList.toggle('hidden-soft', status!=='ativa'); }
   if(planText){ planText.textContent = plan==='recorrente'?'Recorrente':'Mensal'; }
   if(upBtn){ upBtn.classList.toggle('hidden-soft', !(status==='ativa' && plan!=='recorrente')); }
+
+  // Admin: mostra/oculta elementos e ajusta rótulo do painel
+  try{
+    IS_ADMIN = computeIsAdmin(user);
+    qsa('.admin-only').forEach(el=>{ el.classList.toggle('hidden-soft', !IS_ADMIN); });
+    const roleLbl = qs('#dashRoleLabel'); if(roleLbl){ roleLbl.textContent = IS_ADMIN ? 'Painel Administrativo' : 'Painel do Assinante'; }
+  }catch(e){ console.error(e); }
 }
 
 /* ---------- Header (Etapa 1) ---------- */
@@ -622,6 +685,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   // Exigir autenticação: se não logado, enviar para a página de login
   try {
     const u0 = await getCurrentUser();
+    try { IS_ADMIN = computeIsAdmin(u0); } catch(_){ }
     if(!u0){ location.href = 'login.html'; return; }
   } catch(_) { /* se falhar, continua */ }
 
@@ -670,7 +734,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   // Auth
   try {
-    const u=await getCurrentUser(); setAuthUI(u); enforcePublishGuard(u);
+    const u=await getCurrentUser(); setAuthUI(u); enforcePublishGuard(u); await ensureProfileFromMetadata(u);
     const up=qs('#btnSignUp'), si=qs('#btnSignIn'), so=qs('#btnSignOut');
     // Direciona para páginas dedicadas de auth
     up && up.addEventListener('click', ()=>{ location.href='signup.html'; });
@@ -715,6 +779,7 @@ function bindAccountPrefs(){
       try{
         if(themeSel) applyTheme(themeSel.value);
         const full_name = (qs('#meuNome')?.value||'').trim();
+        const username  = (qs('#meuUsername')?.value||'').trim();
         const whatsapp  = (qs('#meuWhatsapp')?.value||'').trim();
         const address   = (qs('#meuEndereco')?.value||'').trim();
         // preserva status/plan/avatar existentes
@@ -724,9 +789,27 @@ function bindAccountPrefs(){
         const status = meta.status || assinaturaStatus || 'ativa';
         const plan = meta.plan || 'mensal';
         if(supa){
-          const { error } = await supa.auth.updateUser({ data: { full_name, whatsapp, address, avatar_url, status, plan } });
+          const { error } = await supa.auth.updateUser({ data: { full_name, username, whatsapp, address, avatar_url, status, plan } });
           if(error){ alert('Erro ao salvar dados: '+error.message); return; }
         }
+        // Sincroniza username no perfil publico (tabela profiles) e garante unicidade
+        try{
+          const userNow = await getCurrentUser();
+          const uid = userNow && userNow.id;
+          const emailNow = userNow && userNow.email;
+          const uname = sanitizeUsername(username);
+          if(uid && supa){
+            if(uname){
+              // verifica se ja existe outro dono para esse username
+              const { data: exists, error: qErr } = await supa.from('profiles').select('id').eq('username', uname).limit(1);
+              if(qErr && String(qErr.code||'')!=='42P01'){ throw qErr; }
+              if(exists && exists.length && exists[0].id !== uid){ alert('Nome de usu90rio indispon90vel.'); return; }
+            }
+            const payload = { id: uid, username: (uname||null), email: emailNow||null, full_name };
+            const { error: upErr } = await supa.from('profiles').upsert(payload, { onConflict: 'id' });
+            if(upErr && String(upErr.code||'')!=='42P01'){ throw upErr; }
+          }
+        }catch(e){ console.error('profiles upsert falhou', e); /* ignora se tabela n3o existir */ }
         alert('Preferências salvas.');
       }catch(e){ console.error(e); alert('Falha ao salvar preferências.'); }
     });

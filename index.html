@@ -65,6 +65,48 @@
   </script>
   <link rel="icon" href="data:,">
   <style>:root { color-scheme: light dark; }</style>
+  <script>
+    // Override para login por username e ajustes de UI
+    async function doLogin(e){
+      e.preventDefault();
+      const loginId = document.getElementById('inEmail').value.trim();
+      const pass  = document.getElementById('inPass').value;
+      const out = document.getElementById('msg'); out.textContent='';
+      if(!supa){ out.textContent='SDK indisponível'; return; }
+      let email = loginId;
+      try{
+        if(loginId && loginId.indexOf('@') === -1){
+          const uname = String(loginId||'').toLowerCase().trim();
+          // Tenta Edge Function primeiro (mais privado)
+          try{
+            const fx = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/username-login';
+            const resp = await fetch(fx, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ username: uname }) });
+            if(resp.ok){ const j=await resp.json(); if(j && j.email){ email=j.email; } else { out.textContent=j.error||'Usuário não encontrado.'; return; } }
+            else { throw new Error('fx not ok'); }
+          }catch(_){
+            // Fallback público: consulta profiles
+            const { data: rows } = await supa.from('profiles').select('email').eq('username', uname).limit(1);
+            if(rows && rows.length){ email = rows[0].email; }
+            else { out.textContent='Usuário não encontrado.'; return; }
+          }
+        }
+      }catch(_){ /* fallback: exige e-mail se falhar */ }
+      const { error } = await supa.auth.signInWithPassword({ email, password: pass });
+      if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
+      location.href = 'dashboard.html';
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const emailInput = document.getElementById('inEmail');
+      if(emailInput){
+        try{ emailInput.type='text'; }catch(_){ }
+        emailInput.placeholder = 'email ou usuario';
+        const lab = emailInput.closest('label');
+        if(lab){
+          for(const n of lab.childNodes){ if(n.nodeType===3){ n.nodeValue = 'E-mail ou usuário'; break; } }
+        }
+      }
+    });
+  </script>
   </head>
 <body>
   <div class="auth-card">
