@@ -802,6 +802,19 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     }
     if(outBtn){ outBtn.addEventListener('click', handleSignOut); }
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
+
+  // Fallback: garante binding do menu, mesmo se o bloco acima falhar
+  try{
+    const av2 = qs('#brandUserAvatar');
+    const menu2 = qs('#userMenu');
+    const outBtn2 = qs('#menuSignOut');
+    if(av2 && menu2 && !av2.__bound){
+      av2.addEventListener('click', (e)=>{ e.stopPropagation(); menu2.classList.toggle('hidden-soft'); });
+      document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) menu2.classList.add('hidden-soft'); });
+      av2.__bound=true;
+    }
+    if(outBtn2 && !outBtn2.__bound){ outBtn2.addEventListener('click', handleSignOut); outBtn2.__bound=true; }
+  }catch(_){ }
 });
 
 window.addEventListener('hashchange', ()=>{ try{ showLoading(); }catch(_){ } setScreenFromHash(); setTimeout(()=>{ try{ hideLoading(); }catch(_){ } }, 200); });
