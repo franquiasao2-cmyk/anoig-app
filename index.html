@@ -91,12 +91,14 @@
       document.getElementById('togglePass').addEventListener('click', togglePass);
     });
   </script>
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
   <style>:root { color-scheme: light dark; }</style>
   </head>
 <body>
   <div class="auth-card">
-    <div class="logo-top"><div class="logo-box"><img src="logo-login.png" alt="Logo" onerror="this.src='logo.png';"></div></div>
+    <div class="logo-top"><div class="logo-box"><img src="assets/logo-256.png" alt="Logo" loading="eager"></div></div>
     <form id="loginForm" class="form">
       <label for="inEmail">E-mail ou usuário</label>
       <div class="input-wrap">
@@ -123,4 +125,3 @@
   </div>
   </body>
 </html>
-

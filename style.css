@@ -41,6 +41,7 @@ a { text-decoration: none; }
   display: flex; align-items: center; justify-content: center;
   font-weight: bold;
 }
+.topbar .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .tabs a {
   margin-left: 12px;
   padding: 6px 12px;
