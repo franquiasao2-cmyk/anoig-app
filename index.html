@@ -84,9 +84,41 @@
           }
         }
       }catch(_){ /* fallback: exige e-mail */ }
-      const { error } = await supa.auth.signInWithPassword({ email, password: pass });
-      if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
+      const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
+      if(error){
+        const msgText = String(error.message||'').toLowerCase();
+        if(msgText.includes('confirm') && msgText.includes('email')){
+          showVerifyBlock(email);
+          return;
+        }
+        out.textContent = error.message || 'Falha ao entrar.'; return;
+      }
+      // Verifica confirmação do e-mail mesmo que o login tenha funcionado
+      try{
+        const { data: udata } = await supa.auth.getUser();
+        const user = udata?.user || null;
+        const confirmedAt = user?.email_confirmed_at || user?.confirmed_at || null;
+        if(!confirmedAt){
+          await supa.auth.signOut();
+          showVerifyBlock(email);
+          return;
+        }
+      }catch(_){}
       location.href = 'dashboard.html';
+    }
+    async function resendConfirm(email){
+      try{
+        await supa.auth.resend({ type:'signup', email });
+        const out = document.getElementById('msg'); if(out) out.textContent = 'Reenviamos o e-mail de confirmação. Verifique sua caixa de entrada e spam.';
+      }catch(_){ const out = document.getElementById('msg'); if(out) out.textContent='Não foi possível reenviar agora.'; }
+    }
+    function showVerifyBlock(email){
+      const box = document.getElementById('verifyWrap');
+      const span = document.getElementById('verifyEmail');
+      if(span){ span.textContent = email||''; }
+      if(box){ box.classList.remove('hidden'); }
+      const out = document.getElementById('msg'); if(out) out.textContent = 'Precisamos confirmar seu e-mail antes de entrar.';
+      window.__lastLoginEmail = email;
     }
     async function doReset(e){
       e.preventDefault();
@@ -113,6 +145,7 @@
       document.getElementById('sendReset').addEventListener('click', (e)=>{ doReset(e); });
       document.getElementById('goSignup').addEventListener('click', (e)=>{ e.preventDefault(); goSignup(); });
       document.getElementById('togglePass').addEventListener('click', togglePass);
+      document.getElementById('resendConfirmLogin')?.addEventListener('click', ()=>{ resendConfirm(window.__lastLoginEmail || document.getElementById('inEmail').value.trim()); });
     });
   </script>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -144,6 +177,13 @@
       <div class="muted" style="margin-bottom:8px">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
       <div class="input-wrap"><input id="fpEmail" type="email" placeholder="seuemail@exemplo.com"></div>
       <div class="btn-row" style="margin-top:10px"><button class="btn" type="button" id="sendReset">Enviar link</button></div>
+    </div>
+    <div id="verifyWrap" class="hidden" style="margin-top:14px">
+      <div class="sep"></div>
+      <div class="muted" style="margin-bottom:8px">
+        Precisamos confirmar seu e-mail antes de entrar. Enviamos um link para <strong id="verifyEmail"></strong>.
+      </div>
+      <div class="btn-row" style="margin-top:10px"><button class="btn" type="button" id="resendConfirmLogin">Reenviar confirmação</button></div>
     </div>
     <div id="msg" class="muted"></div>
   </div>
