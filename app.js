@@ -229,15 +229,15 @@ function bindHeaderUI(){
   const goButtons=qs('#goButtons');
   const logoInput=qs('#logoInput');
 
-  title && title.addEventListener('input', e=>{ state.header.title=e.target.value||'TÃ­tulo da PÃ¡gina'; refreshHeader(); });
-  subtitle && subtitle.addEventListener('input', e=>{ state.header.subtitle=e.target.value||''; refreshHeader(); });
+  title && title.addEventListener('input', e=>{ state.header.title=e.target.value||''; state.previewStarted=true; refreshHeader(); });
+  subtitle && subtitle.addEventListener('input', e=>{ state.header.subtitle=e.target.value||''; state.previewStarted=true; refreshHeader(); });
 
-  titleColor && titleColor.addEventListener('input', e=>{ state.header.titleColor=e.target.value||'#111827'; refreshHeader(); });
-  subtitleColor && subtitleColor.addEventListener('input', e=>{ state.header.subtitleColor=e.target.value||'#4b5563'; refreshHeader(); });
+  titleColor && titleColor.addEventListener('input', e=>{ state.header.titleColor=e.target.value||'#111827'; state.previewStarted=true; refreshHeader(); });
+  subtitleColor && subtitleColor.addEventListener('input', e=>{ state.header.subtitleColor=e.target.value||'#4b5563'; state.previewStarted=true; refreshHeader(); });
 
   if(titleFont){
     titleFont.addEventListener('change', e=>{
-      state.header.titleFont=e.target.value;
+      state.header.titleFont=e.target.value; state.previewStarted=true;
       if(titleFontSample) titleFontSample.style.fontFamily=state.header.titleFont;
       refreshHeader();
     });
@@ -246,22 +246,22 @@ function bindHeaderUI(){
 
   bgType && bgType.addEventListener('change', ()=>{
     state.header.bgType=bgType.value;
+    state.previewStarted = true;
     bgSolidRow && bgSolidRow.classList.toggle('hidden-soft', state.header.bgType!=='solid');
     bgGradientRow && bgGradientRow.classList.toggle('hidden-soft', state.header.bgType!=='gradient');
     bgPresetRow && bgPresetRow.classList.toggle('hidden-soft', state.header.bgType!=='preset');
     refreshHeader();
   });
 
-  headerColor && headerColor.addEventListener('input', e=>{ state.header.color=e.target.value||'#e5e7eb'; refreshHeader(); });
-  grad1 && grad1.addEventListener('input', e=>{ state.header.grad1=e.target.value||'#6366f1'; refreshHeader(); });
-  grad2 && grad2.addEventListener('input', e=>{ state.header.grad2=e.target.value||'#ec4899'; refreshHeader(); });
+  headerColor && headerColor.addEventListener('input', e=>{ state.header.color=e.target.value||'#e5e7eb'; state.previewStarted=true; refreshHeader(); });
+  grad1 && grad1.addEventListener('input', e=>{ state.header.grad1=e.target.value||'#6366f1'; state.previewStarted=true; refreshHeader(); });
+  grad2 && grad2.addEventListener('input', e=>{ state.header.grad2=e.target.value||'#ec4899'; state.previewStarted=true; refreshHeader(); });
 
   const presetsGrid = qs('#headerPresetsGrid');
   presetsGrid && presetsGrid.addEventListener('click', e=>{
     const card = e.target.closest('.model-card'); if(!card) return;
     const preset = card.getAttribute('data-hpreset');
-    state.header.preset = preset || 'pattern1';
-    refreshHeader();
+    state.header.preset = preset || 'pattern1'; state.previewStarted=true; refreshHeader();
   });
   // Layers (advanced background)
   try{ bindLayersUI(); }catch(_){ }
@@ -269,7 +269,7 @@ function bindHeaderUI(){
   logoInput && logoInput.addEventListener('change', ()=>{
     const f=logoInput.files && logoInput.files[0]; if(!f) return;
     const r=new FileReader();
-    r.onload = ()=>{ state.header.logoDataUrl = String(r.result); refreshHeader(); };
+    r.onload = ()=>{ state.header.logoDataUrl = String(r.result); state.previewStarted=true; refreshHeader(); };
     r.readAsDataURL(f);
   });
 
@@ -452,6 +452,7 @@ function refreshButtonsUI(){
     });
   }
   loadButtonToForm();
+  try{ state.previewStarted=true; refreshHeader(); }catch(_){ }
 }
 
 function loadButtonToForm(){
@@ -1053,6 +1054,9 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
+
+
 
 
 
