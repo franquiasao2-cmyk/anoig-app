@@ -745,7 +745,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   try { bindHeaderUI(); refreshHeader(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindHeaderUI'); }
   try { bindButtonsUI(); refreshButtonsUI(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindButtonsUI'); }
   
-  try { bindAccountPrefs(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
+  try { bindAccountPrefs(); }\n  try { initLayerTabs(); } catch(e){} catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
 
   // Vitrine da aba Modelos (se existir)
   qsa('.model-card button').forEach(btn=>{
@@ -787,6 +787,28 @@ function enforcePublishGuard(user){
   if(verifyBanner) verifyBanner.classList.toggle('hidden-soft', isVerified);
   if(resendBtn) resendBtn.style.display = isVerified ? 'none' : 'inline-block';
   if(emailStatus) emailStatus.textContent = isVerified ? 'E-mail verificado.' : 'E-mail não verificado.';
+}
+
+// -------- Layers tabs (sidebar) --------
+function initLayerTabs(){
+  try{
+    const tabs = qsa('.layers-tabs-rail .layer-tab');
+    const sections = {
+      'layer-header': qs('#layer-header'),
+      'layer-buttons': qs('#layer-buttons'),
+      'layer-publish': qs('#layer-publish')
+    };
+    const show = (key)=>{
+      tabs.forEach(t=>t.classList.toggle('active', t.getAttribute('data-target')===key));
+      Object.keys(sections).forEach(k=>{ const el=sections[k]; if(el){ el.classList.toggle('hidden-soft', k!==key); } });
+    };
+    tabs.forEach(btn=>{
+      btn.addEventListener('click', ()=>{ show(btn.getAttribute('data-target')); });
+    });
+    // default
+    const active = (tabs.find?.(t=>t.classList.contains('active')))||tabs[0];
+    if(active){ show(active.getAttribute('data-target')); }
+  }catch(_){ }
 }
 
 // ====== Layers editor (header background) ======
@@ -998,6 +1020,7 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
 
 
 
