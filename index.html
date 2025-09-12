@@ -1,37 +1,66 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Entrar — Anoig</title>
+  <title>Entrar - Anoig</title>
   <link rel="stylesheet" href="style.css?v=3">
   <style>
     html, body { height: 100%; }
-    body { margin:0; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px; background:#25393D; }
-    .auth-card { width: 100%; max-width: 380px; background: #3A6B75; color:#ffffff; border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-    .brand { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-    .brand .logo { width:36px;height:36px;border-radius:8px;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700; overflow:hidden; }
-    .brand .logo img { width:100%; height:100%; object-fit:contain; display:block; }
-    .muted { color: #e5e7eb; font-size: 0.9em; }
-    .sep { height:1px; background:var(--stroke); margin:12px 0; }
-    .link { color: var(--primary); cursor:pointer; background:none; border:0; padding:0; font: inherit; }
+    body {
+      margin:0; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px;
+      background: radial-gradient(1200px 700px at 20% 10%, #0f1b1e, transparent 70%), #0f1b1e;
+    }
+    .auth-card { width: 100%; max-width: 420px; background: #111a1d; color:#e9eff0; border:1px solid #2a3a3e; border-radius:12px; padding:24px; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+    .logo-top { width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+    .logo-top .logo-box { width: 180px; max-width: 80%; height: 68px; border-radius: 10px; overflow: hidden; display:flex; align-items:center; justify-content:center; }
+    .logo-top .logo-box img { width:100%; height:100%; object-fit:contain; display:block; }
+    .form label { display:block; color:#b9cbcf; font-size:.95em; margin: 12px 0 6px; }
+    .input-wrap { position: relative; }
+    .input-wrap input { width:100%; background:#0e1619; color:#e9eff0; border:1px solid #2a3a3e; border-radius:10px; padding:14px 44px 14px 14px; outline:none; }
+    .input-wrap input::placeholder { color:#7f9aa1; }
+    .input-wrap .toggle-pass { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:transparent; border:0; color:#7f9aa1; cursor:pointer; padding:6px; border-radius:6px; }
+    .links-row { display:flex; align-items:center; justify-content:space-between; margin: 10px 0 16px; }
+    .links-row .left a { color:#9ad0d6; font-weight:700; }
+    .links-row .right { color:#9ad0d6; font-size:.95em; }
+    .links-row .right a { color:#9ad0d6; text-decoration: underline; }
+    .btn.primary { width:100%; background:#2b7a78; border:none; color:#ffffff; padding:14px; border-radius:10px; font-weight:700; }
+    .btn.primary:hover { background:#226160; }
     .hidden { display:none; }
-    input { background:#ffffff; color:#111827; }
-    .btn.primary { background:#2E5560; border:none; color:#ffffff; }
-    .btn.primary:hover { background:#24434A; }
+    .muted { color:#9aaeb2; font-size:.9em; margin-top:10px; }
+    .sep { height:1px; background:#203236; margin:12px 0; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://tyhoonmssqxbtktiuwtd.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5aG9vbm1zc3F4YnRrdGl1d3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0Mjg5MTgsImV4cCI6MjA3MzAwNDkxOH0.e-vVW5CSihmFlYGpvms0KLCrhqxdCqujJxhT6a-nBpI";
     const supa = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
     async function doLogin(e){
       e.preventDefault();
-      const email = document.getElementById('inEmail').value.trim();
+      const loginId = document.getElementById('inEmail').value.trim();
       const pass  = document.getElementById('inPass').value;
       const out = document.getElementById('msg'); out.textContent='';
       if(!supa){ out.textContent='SDK indisponível'; return; }
-      const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
+      let email = loginId;
+      try{
+        if(loginId && loginId.indexOf('@') === -1){
+          const uname = String(loginId||'').toLowerCase().trim();
+          // Tenta Edge Function (mais privado)
+          try{
+            const fx = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/username-login';
+            const resp = await fetch(fx, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ username: uname }) });
+            if(resp.ok){ const j=await resp.json(); if(j && j.email){ email=j.email; } else { out.textContent=j.error||'Usuário não encontrado.'; return; } }
+            else { throw new Error('fx not ok'); }
+          }catch(_){
+            // Fallback público (profiles)
+            const { data: rows } = await supa.from('profiles').select('email').eq('username', uname).limit(1);
+            if(rows && rows.length){ email = rows[0].email; }
+            else { out.textContent='Usuário não encontrado.'; return; }
+          }
+        }
+      }catch(_){ /* fallback: exige e-mail */ }
+      const { error } = await supa.auth.signInWithPassword({ email, password: pass });
       if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
       location.href = 'dashboard.html';
     }
@@ -45,102 +74,52 @@
       out.textContent = 'Enviamos um e-mail com instruções para redefinir a senha.';
     }
     function goSignup(){ location.href = 'signup.html'; }
-    function toggleForgot(){ document.getElementById('forgotWrap').classList.toggle('hidden'); }
+    function toggleForgot(e){ e?.preventDefault?.(); document.getElementById('forgotWrap').classList.toggle('hidden'); }
+    function togglePass(){ const p=document.getElementById('inPass'); if(!p) return; p.type = (p.type==='password'?'text':'password'); }
+
     document.addEventListener('DOMContentLoaded', async ()=>{
-      // Se já estiver logado, mostra aviso com botão para o painel
       try{
         if(supa){
           const { data:{ user } } = await supa.auth.getUser();
-          if(user){
-            const box=document.getElementById('alreadyLogged');
-            if(box) box.classList.remove('hidden');
-            const go=document.getElementById('goDashboard');
-            if(go) go.addEventListener('click', ()=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); location.href='dashboard.html'; });
-          }
+          if(user){ /* opcional: poderia oferecer ir direto ao dashboard */ }
         }
       }catch(_){}
-      document.getElementById('loginForm').addEventListener('submit', (e)=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); doLogin(e); });
+      document.getElementById('loginForm').addEventListener('submit', (e)=>{ doLogin(e); });
       document.getElementById('forgotBtn').addEventListener('click', toggleForgot);
-      document.getElementById('sendReset').addEventListener('click', (e)=>{ document.getElementById('loadingOverlay')?.classList.remove('hidden'); doReset(e); });
-      document.getElementById('goSignup').addEventListener('click', goSignup);
+      document.getElementById('sendReset').addEventListener('click', (e)=>{ doReset(e); });
+      document.getElementById('goSignup').addEventListener('click', (e)=>{ e.preventDefault(); goSignup(); });
+      document.getElementById('togglePass').addEventListener('click', togglePass);
     });
   </script>
   <link rel="icon" href="data:,">
   <style>:root { color-scheme: light dark; }</style>
-  <script>
-    // Override para login por username e ajustes de UI
-    async function doLogin(e){
-      e.preventDefault();
-      const loginId = document.getElementById('inEmail').value.trim();
-      const pass  = document.getElementById('inPass').value;
-      const out = document.getElementById('msg'); out.textContent='';
-      if(!supa){ out.textContent='SDK indisponível'; return; }
-      let email = loginId;
-      try{
-        if(loginId && loginId.indexOf('@') === -1){
-          const uname = String(loginId||'').toLowerCase().trim();
-          // Tenta Edge Function primeiro (mais privado)
-          try{
-            const fx = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/username-login';
-            const resp = await fetch(fx, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ username: uname }) });
-            if(resp.ok){ const j=await resp.json(); if(j && j.email){ email=j.email; } else { out.textContent=j.error||'Usuário não encontrado.'; return; } }
-            else { throw new Error('fx not ok'); }
-          }catch(_){
-            // Fallback público: consulta profiles
-            const { data: rows } = await supa.from('profiles').select('email').eq('username', uname).limit(1);
-            if(rows && rows.length){ email = rows[0].email; }
-            else { out.textContent='Usuário não encontrado.'; return; }
-          }
-        }
-      }catch(_){ /* fallback: exige e-mail se falhar */ }
-      const { error } = await supa.auth.signInWithPassword({ email, password: pass });
-      if(error){ out.textContent = error.message || 'Falha ao entrar.'; return; }
-      location.href = 'dashboard.html';
-    }
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const emailInput = document.getElementById('inEmail');
-      if(emailInput){
-        try{ emailInput.type='text'; }catch(_){ }
-        emailInput.placeholder = 'email ou usuario';
-        const lab = emailInput.closest('label');
-        if(lab){
-          for(const n of lab.childNodes){ if(n.nodeType===3){ n.nodeValue = 'E-mail ou usuário'; break; } }
-        }
-      }
-    });
-  </script>
   </head>
 <body>
   <div class="auth-card">
-    <div class="brand">
-      <div class="logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'; this.parentElement.textContent='A';"></div>
-      <div>
-        <strong>Anoig</strong><br>
-        <span class="muted">Acesse sua conta</span>
-      </div>
-    </div>
+    <div class="logo-top"><div class="logo-box"><img src="logo-login.png" alt="Logo" onerror="this.src='logo.png';"></div></div>
     <form id="loginForm" class="form">
-      <label>E-mail
-        <input id="inEmail" type="email" placeholder="seuemail@exemplo.com" required>
-      </label>
-      <label>Senha
-        <input id="inPass" type="password" placeholder="••••••••" required>
-      </label>
-      <div class="btn-row" style="margin-top:8px">
-        <button class="btn primary" type="submit">Entrar</button>
-        <button class="btn" type="button" id="goSignup">Criar conta</button>
-        <button class="btn ghost" type="button" id="forgotBtn">Esqueci a senha</button>
+      <label for="inEmail">E-mail ou usuário</label>
+      <div class="input-wrap">
+        <input id="inEmail" type="text" placeholder="informe seu e-mail ou usuário" required>
       </div>
+      <label for="inPass">Senha</label>
+      <div class="input-wrap">
+        <input id="inPass" type="password" placeholder="Senha" required>
+        <button class="toggle-pass" type="button" id="togglePass" aria-label="Mostrar/ocultar senha">👁️</button>
+      </div>
+      <div class="links-row">
+        <div class="left"><a href="#" id="goSignup">Criar minha conta</a></div>
+        <div class="right">Esqueceu a senha? <a href="#" id="forgotBtn">Clique aqui.</a></div>
+      </div>
+      <button class="btn primary" type="submit">Entrar</button>
     </form>
-    <div id="forgotWrap" class="hidden" style="margin-top:10px">
+    <div id="forgotWrap" class="hidden" style="margin-top:14px">
       <div class="sep"></div>
-      <div class="muted" style="margin-bottom:6px">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
-      <input id="fpEmail" type="email" placeholder="seuemail@exemplo.com">
-      <div class="btn-row" style="margin-top:6px">
-        <button class="btn" type="button" id="sendReset">Enviar link</button>
-      </div>
+      <div class="muted" style="margin-bottom:8px">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
+      <div class="input-wrap"><input id="fpEmail" type="email" placeholder="seuemail@exemplo.com"></div>
+      <div class="btn-row" style="margin-top:10px"><button class="btn" type="button" id="sendReset">Enviar link</button></div>
     </div>
-    <div id="msg" class="muted" style="margin-top:10px"></div>
+    <div id="msg" class="muted"></div>
   </div>
   </body>
 </html>
