@@ -792,22 +792,29 @@ function enforcePublishGuard(user){
 // -------- Layers tabs (sidebar) --------
 function initLayerTabs(){
   try{
-    const tabs = qsa('.layers-tabs-rail .layer-tab');
+    const rail = qs('.layers-tabs-rail');
+    if(!rail) return;
     const sections = {
       'layer-header': qs('#layer-header'),
       'layer-buttons': qs('#layer-buttons'),
       'layer-publish': qs('#layer-publish')
     };
+    const tabs = qsa('.layers-tabs-rail .layer-tab');
     const show = (key)=>{
       tabs.forEach(t=>t.classList.toggle('active', t.getAttribute('data-target')===key));
       Object.keys(sections).forEach(k=>{ const el=sections[k]; if(el){ el.classList.toggle('hidden-soft', k!==key); } });
     };
-    tabs.forEach(btn=>{
-      btn.addEventListener('click', ()=>{ show(btn.getAttribute('data-target')); });
+    rail.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.layer-tab');
+      if(!btn) return;
+      e.preventDefault();
+      show(btn.getAttribute('data-target'));
     });
+    // Make tabs focusable
+    tabs.forEach(t=>{ t.setAttribute('tabindex','0'); });
     // default
-    const active = (tabs.find?.(t=>t.classList.contains('active')))||tabs[0];
-    if(active){ show(active.getAttribute('data-target')); }
+    const active = tabs.filter ? tabs.filter(t=>t.classList.contains('active'))[0] : null;
+    show((active||tabs[0])?.getAttribute('data-target'));
   }catch(_){ }
 }
 
