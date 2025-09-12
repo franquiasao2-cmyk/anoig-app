@@ -12,6 +12,7 @@ a { text-decoration: none; }
   --primary: #2563eb;
   --danger: #dc2626;
   --stroke: #d1d5db;
+  --phone-header-default: linear-gradient(135deg, #1f2937, #111827);
 }
 [data-theme="dark"] {
   --bg: #111827;
@@ -129,6 +130,25 @@ input[type=color] { padding: 0; height: 36px; }
 }
 .phone-header { padding: 16px; text-align: center; }
 .phone-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+/* Preview header elements */
+.phone-header .avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-weight: 700;
+}
+.pv-title { font-weight: 700; font-size: 18px; line-height: 1.2; }
+.pv-subtitle { font-size: 14px; line-height: 1.2; margin-top: 2px; color: var(--muted); }
 
 /* BOTÕES VISUAIS */
 .card-btn {

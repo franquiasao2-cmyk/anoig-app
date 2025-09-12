@@ -244,9 +244,9 @@ function bindHeaderUI(){
 
   bgType && bgType.addEventListener('change', ()=>{
     state.header.bgType=bgType.value;
-    bgSolidRow && bgSolidRow.classList.toggle('hidden', state.header.bgType!=='solid');
-    bgGradientRow && bgGradientRow.classList.toggle('hidden', state.header.bgType!=='gradient');
-    bgPresetRow && bgPresetRow.classList.toggle('hidden', state.header.bgType!=='preset');
+    bgSolidRow && bgSolidRow.classList.toggle('hidden-soft', state.header.bgType!=='solid');
+    bgGradientRow && bgGradientRow.classList.toggle('hidden-soft', state.header.bgType!=='gradient');
+    bgPresetRow && bgPresetRow.classList.toggle('hidden-soft', state.header.bgType!=='preset');
     refreshHeader();
   });
 
