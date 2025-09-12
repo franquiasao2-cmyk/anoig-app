@@ -34,7 +34,8 @@ var state = {
     grad1: '#6366f1',
     grad2: '#ec4899',
     preset: 'pattern1',
-    logoDataUrl: ''
+    logoDataUrl: '',
+    layers: []
   },
   buttons: [],
   selectedIndex: -1,
@@ -261,6 +262,8 @@ function bindHeaderUI(){
     state.header.preset = preset || 'pattern1';
     refreshHeader();
   });
+  // Layers (advanced background)
+  try{ bindLayersUI(); }catch(_){ }
 
   logoInput && logoInput.addEventListener('change', ()=>{
     const f=logoInput.files && logoInput.files[0]; if(!f) return;
@@ -283,17 +286,38 @@ function refreshHeader(){
   if(s){ s.textContent=state.header.subtitle||''; s.style.color=state.header.subtitleColor||'#4b5563'; }
 
   if(header){
-    if(state.header.bgType==='solid'){
-      header.style.background = state.header.color||'#e5e7eb';
-    } else if(state.header.bgType==='gradient'){
-      header.style.background = `linear-gradient(135deg, ${state.header.grad1||'#6366f1'}, ${state.header.grad2||'#ec4899'})`;
+    // If layers are present, render them as stacked elements; otherwise fallback to simple bg
+    const layers = Array.isArray(state.header.layers) ? state.header.layers : [];
+    header.querySelectorAll('.hdr-layer').forEach(el=>el.remove());
+    if(layers.length>0){
+      header.style.background = 'none';
+      header.style.backgroundImage = 'none';
+      layers.forEach(L=>{
+        const d=document.createElement('div'); d.className='hdr-layer';
+        const op=Math.max(0,Math.min(1,Number(L.opacity??1))); d.style.opacity=String(op);
+        if(L.type==='solid'){
+          d.style.background = L.color||'#000000';
+        } else if(L.type==='gradient'){
+          const a=Number(L.angle||135); const c1=L.color1||'#6366f1'; const c2=L.color2||'#ec4899';
+          d.style.background = `linear-gradient(${a}deg, ${c1}, ${c2})`;
+        } else if(L.type==='image'){
+          if(L.url){ d.style.backgroundImage=`url('${L.url}')`; d.style.backgroundSize=L.size||'cover'; d.style.backgroundPosition=L.position||'center'; d.style.backgroundRepeat='no-repeat'; }
+        }
+        header.appendChild(d);
+      });
     } else {
-      if(state.header.preset==='pattern2'){
-        header.style.background='linear-gradient(135deg,#cbd5e1,#94a3b8)';
-      } else if(state.header.preset==='pattern3'){
-        header.style.background='linear-gradient(135deg,#fef3c7,#fca5a5)';
+      if(state.header.bgType==='solid'){
+        header.style.background = state.header.color||'#e5e7eb';
+      } else if(state.header.bgType==='gradient'){
+        header.style.background = `linear-gradient(135deg, ${state.header.grad1||'#6366f1'}, ${state.header.grad2||'#ec4899'})`;
       } else {
-        header.style.background='var(--phone-header-default)';
+        if(state.header.preset==='pattern2'){
+          header.style.background='linear-gradient(135deg,#cbd5e1,#94a3b8)';
+        } else if(state.header.preset==='pattern3'){
+          header.style.background='linear-gradient(135deg,#fef3c7,#fca5a5)';
+        } else {
+          header.style.background='var(--phone-header-default)';
+        }
       }
     }
   }
@@ -763,6 +787,96 @@ function enforcePublishGuard(user){
   if(verifyBanner) verifyBanner.classList.toggle('hidden-soft', isVerified);
   if(resendBtn) resendBtn.style.display = isVerified ? 'none' : 'inline-block';
   if(emailStatus) emailStatus.textContent = isVerified ? 'E-mail verificado.' : 'E-mail não verificado.';
+}
+
+// ====== Layers editor (header background) ======
+function bindLayersUI(){
+  const addSolid = qs('#addLayerSolid');
+  const addGrad  = qs('#addLayerGradient');
+  const addImg   = qs('#addLayerImage');
+  const list     = qs('#layersList');
+
+  function render(){
+    if(!list) return;
+    list.innerHTML='';
+    (state.header.layers||[]).forEach((L,idx)=>{
+      const li=document.createElement('li');
+      li.setAttribute('data-index', String(idx));
+      let inner='';
+      if(L.type==='solid'){
+        inner = '<div class="item-left"><strong>Cor solida</strong></div>'+
+                '<div class="item-actions" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+
+                `<input type="color" value="${L.color||'#000000'}" data-prop="color" data-i="${idx}">`+
+                `<label style="font-size:12px;color:var(--muted)">Opacidade <input type="range" min="0" max="100" value="${Math.round((L.opacity??1)*100)}" data-prop="opacity" data-i="${idx}"></label>`+
+                `<button class="btn small" data-act="up" data-i="${idx}">↑</button>`+
+                `<button class="btn small" data-act="down" data-i="${idx}">↓</button>`+
+                `<button class="btn small danger" data-act="del" data-i="${idx}">Excluir</button>`+
+                '</div>';
+      } else if(L.type==='gradient'){
+        inner = '<div class="item-left"><strong>Gradiente</strong></div>'+
+                '<div class="item-actions" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+
+                `<input type="color" value="${L.color1||'#6366f1'}" data-prop="color1" data-i="${idx}">`+
+                `<input type="color" value="${L.color2||'#ec4899'}" data-prop="color2" data-i="${idx}">`+
+                `<label style="font-size:12px;color:var(--muted)">Angulo <input type="range" min="0" max="360" value="${Number(L.angle||135)}" data-prop="angle" data-i="${idx}"></label>`+
+                `<label style="font-size:12px;color:var(--muted)">Opacidade <input type="range" min="0" max="100" value="${Math.round((L.opacity??1)*100)}" data-prop="opacity" data-i="${idx}"></label>`+
+                `<button class="btn small" data-act="up" data-i="${idx}">↑</button>`+
+                `<button class="btn small" data-act="down" data-i="${idx}">↓</button>`+
+                `<button class="btn small danger" data-act="del" data-i="${idx}">Excluir</button>`+
+                '</div>';
+      } else if(L.type==='image'){
+        inner = '<div class="item-left"><strong>Imagem</strong></div>'+
+                '<div class="item-actions" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+
+                `<input type="file" accept="image/*" data-prop="file" data-i="${idx}">`+
+                `<select data-prop="size" data-i="${idx}"><option value="cover" ${ (L.size||'cover')==='cover'?'selected':'' }>Cobrir</option><option value="contain" ${ (L.size||'cover')==='contain'?'selected':'' }>Conter</option></select>`+
+                `<select data-prop="position" data-i="${idx}"><option value="center" ${ (L.position||'center')==='center'?'selected':'' }>Centro</option><option value="top">Topo</option><option value="bottom">Base</option><option value="left">Esq.</option><option value="right">Dir.</option></select>`+
+                `<label style="font-size:12px;color:var(--muted)">Opacidade <input type="range" min="0" max="100" value="${Math.round((L.opacity??1)*100)}" data-prop="opacity" data-i="${idx}"></label>`+
+                `<button class="btn small" data-act="up" data-i="${idx}">↑</button>`+
+                `<button class="btn small" data-act="down" data-i="${idx}">↓</button>`+
+                `<button class="btn small danger" data-act="del" data-i="${idx}">Excluir</button>`+
+                '</div>';
+      }
+      li.innerHTML = inner; list.appendChild(li);
+    });
+  }
+  function add(type){
+    const L={ type, opacity:1 };
+    if(type==='solid'){ L.color='#1f2937'; }
+    if(type==='gradient'){ L.color1='#6366f1'; L.color2='#ec4899'; L.angle=135; }
+    if(type==='image'){ L.size='cover'; L.position='center'; }
+    state.header.layers = (state.header.layers||[]).concat([L]);
+    render(); refreshHeader();
+  }
+  addSolid && addSolid.addEventListener('click', ()=>add('solid'));
+  addGrad  && addGrad.addEventListener('click', ()=>add('gradient'));
+  addImg   && addImg.addEventListener('click', ()=>add('image'));
+  list && list.addEventListener('click', (e)=>{
+    const btn=e.target.closest('button[data-act]'); if(!btn) return;
+    const i=Number(btn.getAttribute('data-i')); const act=btn.getAttribute('data-act');
+    if(act==='del'){ state.header.layers.splice(i,1); }
+    else if(act==='up' && i>0){ const t=state.header.layers[i]; state.header.layers[i]=state.header.layers[i-1]; state.header.layers[i-1]=t; }
+    else if(act==='down' && i<state.header.layers.length-1){ const t=state.header.layers[i]; state.header.layers[i]=state.header.layers[i+1]; state.header.layers[i+1]=t; }
+    render(); refreshHeader();
+  });
+  list && list.addEventListener('input', (e)=>{
+    const t=e.target; const prop=t.getAttribute('data-prop'); if(!prop) return;
+    const i=Number(t.getAttribute('data-i')); const L=state.header.layers[i]; if(!L) return;
+    if(prop==='opacity'){ L.opacity=Math.max(0,Math.min(1,Number(t.value)/100)); }
+    else if(prop==='angle'){ L.angle=Number(t.value)||0; }
+    else if(prop==='color'){ L.color=t.value; }
+    else if(prop==='color1'){ L.color1=t.value; }
+    else if(prop==='color2'){ L.color2=t.value; }
+    else if(prop==='size'){ L.size=t.value; }
+    else if(prop==='position'){ L.position=t.value; }
+    refreshHeader();
+  });
+  list && list.addEventListener('change', (e)=>{
+    const t=e.target; const prop=t.getAttribute('data-prop'); if(prop!=='file') return;
+    const i=Number(t.getAttribute('data-i')); const L=state.header.layers[i]; if(!L) return;
+    const f=t.files && t.files[0]; if(!f) return; const r=new FileReader();
+    r.onload=()=>{ L.url=String(r.result); refreshHeader(); };
+    r.readAsDataURL(f);
+  });
+  render();
 }
 
 /* ---------- Preferências / Dados ---------- */

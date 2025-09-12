@@ -129,7 +129,7 @@ input[type=color] { padding: 0; height: 36px; }
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
-.phone-header { padding: 24px; text-align: center; }
+.phone-header { padding: 24px; text-align: center; position: relative; overflow: hidden; }
 .phone-body { flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 
 /* Preview header elements */
@@ -150,6 +150,10 @@ input[type=color] { padding: 0; height: 36px; }
 }
 .pv-title { font-weight: 800; font-size: 22px; line-height: 1.25; }
 .pv-subtitle { font-size: 16px; line-height: 1.25; margin-top: 4px; color: var(--muted); }
+
+/* Header layers for preview */
+.phone-header > * { position: relative; z-index: 1; }
+.hdr-layer { position: absolute; inset: 0; z-index: 0; background: transparent; background-size: cover; background-position: center; background-repeat: no-repeat; pointer-events: none; }
 
 /* BOTÕES VISUAIS */
 .card-btn {
