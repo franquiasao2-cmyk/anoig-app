@@ -75,6 +75,10 @@ a { text-decoration: none; }
 .user-menu .menu-item.danger { background:#dc2626; color:#fff; text-align:center; margin-top:6px; }
 .user-menu .menu-item.danger:hover { background:#b91c1c; }
 
+/* User area on the right */
+.user-area { position: relative; }
+.topnav-right .user-menu { left: auto; right: 0; top: 56px; }
+
 @media (max-width: 768px) {
   .topnav-inner { gap: 12px; }
   .topnav-left .brand-mark { width: 36px; height: 36px; }
