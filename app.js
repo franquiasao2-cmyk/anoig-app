@@ -39,7 +39,8 @@ var state = {
   },
   buttons: [],
   selectedIndex: -1,
-  slug: ''
+  slug: '',
+  previewStarted: false
 };
 
 function qs(s){ return document.querySelector(s); }
@@ -329,7 +330,7 @@ function refreshHeader(){
       const emptySub = !(state.header.subtitle||'').trim();
       const noLogo = !state.header.logoDataUrl;
       const noButtons = !(state.buttons && state.buttons.length);
-      const showPH = emptyTitle && emptySub && noLogo && noButtons;
+      const showPH = (!state.previewStarted) && emptyTitle && emptySub && noLogo && noButtons;
       ph.classList.toggle('hidden-soft', !showPH); if(hdr) hdr.classList.toggle('hidden-soft', showPH); if(body) body.classList.toggle('hidden-soft', showPH);
     }
   }catch(_){ }
@@ -758,7 +759,19 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   try { bindButtonsUI(); refreshButtonsUI(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindButtonsUI'); }
   
   try { bindAccountPrefs(); } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: bindAccountPrefs'); }
-  try { initLayerTabs(); } catch(e){}
+  
+  // Marca início da pré-visualização ao editar qualquer campo do painel
+  try{
+    const panel = document.querySelector('#view-criar aside.panel');
+    if(panel){
+      const mark = ()=>{ if(!state.previewStarted){ state.previewStarted = true; refreshHeader(); }};
+      panel.addEventListener('input', mark, true);
+      panel.addEventListener('change', mark, true);
+      panel.addEventListener('click', (e)=>{
+        if(e.target.closest('#addBtn') || e.target.closest('#applyBtn') || e.target.closest('#headerPresetsGrid')){ mark(); }
+      }, true);
+    }
+  }catch(_){}try { initLayerTabs(); } catch(e){}
 
   // Vitrine da aba Modelos (se existir)
   qsa('.model-card button').forEach(btn=>{
@@ -1040,6 +1053,7 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
 
 
 
