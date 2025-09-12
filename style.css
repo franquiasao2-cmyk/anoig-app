@@ -54,7 +54,7 @@ a { text-decoration: none; }
 }
 
 /* --- Top Nav (dashboard) --- */
-.topbar.topnav-large { display: block; padding: 12px 16px; background:#4169e1; color:#fff; }
+.topbar.topnav-large { display: block; padding: 12px 16px; background:#000; color:#fff; }
 .topnav-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .topnav-left .brand-mark { width: 48px; height: 48px; object-fit: contain; display: block; }
 .topnav-right { display: flex; align-items: center; gap: 12px; }
