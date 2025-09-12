@@ -24,10 +24,10 @@ var assinaturaStatus = 'ativa';
 
 var state = {
   header: {
-    title: 'TÃ­tulo da PÃ¡gina',
+    title: '',
     titleColor: '#111827',
     titleFont: 'Inter, Arial, sans-serif',
-    subtitle: 'SubtÃ­tulo opcional',
+    subtitle: '',
     subtitleColor: '#4b5563',
     bgType: 'solid',
     color: '#e5e7eb',
@@ -282,7 +282,7 @@ function refreshHeader(){
   const header=qs('#phoneHeader'); const t=qs('#pvTitle'); const s=qs('#pvSubtitle');
   const avatar=qs('#avatarBox');
 
-  if(t){ t.textContent=state.header.title||'TÃ­tulo da PÃ¡gina'; t.style.color=state.header.titleColor||'#111827'; t.style.fontFamily=state.header.titleFont; }
+  if(t){ t.textContent = (state.header.title||'Título da Página'); t.style.color=state.header.titleColor||'#111827'; t.style.fontFamily=state.header.titleFont; }
   if(s){ s.textContent=state.header.subtitle||''; s.style.color=state.header.subtitleColor||'#4b5563'; }
 
   if(header){
@@ -321,6 +321,19 @@ function refreshHeader(){
       }
     }
   }
+
+  // Placeholder (pré-visualização inicial)
+  try{
+    const ph = qs('#phonePlaceholder');
+    if(ph){
+      const emptyTitle = !(state.header.title||'').trim();
+      const emptySub = !(state.header.subtitle||'').trim();
+      const noLogo = !state.header.logoDataUrl;
+      const noButtons = !(state.buttons && state.buttons.length);
+      const showPH = emptyTitle && emptySub && noLogo && noButtons;
+      ph.classList.toggle('hidden-soft', !showPH);
+    }
+  }catch(_){ }
 
   const logoPrev=qs('#logoPreview');
   if(state.header.logoDataUrl){
@@ -1028,6 +1041,8 @@ async function handleSignOut(){
   } catch(_) {}
   location.href='login.html';
 }
+
+
 
 
 
