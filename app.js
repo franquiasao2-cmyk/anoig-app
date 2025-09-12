@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   // Auth
   try {
-    const u=await getCurrentUser(); setAuthUI(u); enforcePublishGuard(u); await ensureProfileFromMetadata(u);
+    const u=await getCurrentUser(); setAuthUI(u); enforcePublishGuard(u); /* await ensureProfileFromMetadata(u); */
     const up=qs('#btnSignUp'), si=qs('#btnSignIn'), so=qs('#btnSignOut');
     // Direciona para páginas dedicadas de auth
     up && up.addEventListener('click', ()=>{ location.href='signup.html'; });
@@ -801,6 +801,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
       const userArea = av.closest('.user-area') || document.body;
       av.addEventListener('click', (e)=>{ e.stopPropagation(); userArea.classList.toggle('open'); menu.classList.toggle('hidden-soft', !userArea.classList.contains('open')); });
       document.addEventListener('click', (e)=>{ if(!menu.contains(e.target) && !av.contains(e.target)) { userArea.classList.remove('open'); menu.classList.add('hidden-soft'); } });
+      // Fechar menu ao clicar em qualquer item
+      qsa('#userMenu .menu-item').forEach(it=>{
+        it.addEventListener('click', ()=>{ userArea.classList.remove('open'); menu.classList.add('hidden-soft'); });
+      });
     }
     if(outBtn){ outBtn.addEventListener('click', handleSignOut); }
   } catch(e){ console.error(e); __devlog && __devlog('FALHOU EM: auth init'); }
@@ -815,6 +819,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
       av2.addEventListener('click', (e)=>{ e.stopPropagation(); userArea2.classList.toggle('open'); menu2.classList.toggle('hidden-soft', !userArea2.classList.contains('open')); });
       document.addEventListener('click', (e)=>{ if(!menu2.contains(e.target) && !av2.contains(e.target)) { userArea2.classList.remove('open'); menu2.classList.add('hidden-soft'); } });
       av2.__bound=true;
+      // Fechar menu ao clicar em qualquer item
+      qsa('#userMenu .menu-item').forEach(it=>{
+        it.addEventListener('click', ()=>{ userArea2.classList.remove('open'); menu2.classList.add('hidden-soft'); });
+      });
     }
     if(outBtn2 && !outBtn2.__bound){ outBtn2.addEventListener('click', handleSignOut); outBtn2.__bound=true; }
   }catch(_){ }
