@@ -133,11 +133,11 @@ input[type=color] { padding: 0; height: 36px; }
 
 /* PREVIEW */
 .preview { flex: 1; display: flex; justify-content: center; align-items: flex-start; }
-.phone-shell { position: relative; padding: 18px; border-radius: 44px; background: linear-gradient(180deg,#0f1115,#0b0d10); box-shadow: inset 0 0 0 3px #171a20, 0 24px 48px rgba(0,0,0,0.28); }
-.phone-shell::before { content:""; position:absolute; inset:6px; border-radius: 38px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.04); pointer-events:none; }
+.phone-shell { position: relative; padding: 10px; border-radius: 42px; background: linear-gradient(180deg,#0f1115,#0b0d10); box-shadow: inset 0 0 0 1px #171a20, 0 24px 48px rgba(0,0,0,0.28); }
+.phone-shell::before { content:""; position:absolute; inset:4px; border-radius: 36px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); pointer-events:none; }
 .phone {
   width: 420px; min-height: 780px;
-  border: 1px solid var(--stroke);
+  border: 0;
   border-radius: 34px;
   background: var(--surface);
   display: flex; flex-direction: column; position: relative;
